@@ -15,6 +15,7 @@
 namespace RenderingKit
 {
     using namespace zfw;
+    using std::make_unique;
 
     // FIXME: Bounds checking for all usages
     static const GLenum primitiveTypeToGLMode[] = { GL_LINES, GL_TRIANGLES, GL_QUADS };
@@ -40,6 +41,7 @@ namespace RenderingKit
 
             virtual void BeginFrame() override;
             virtual void Clear() override;
+            virtual void Clear(Float4 color) override;
             virtual void ClearBuffers(bool color, bool depth, bool stencil) override;
             virtual void ClearDepth() override;
             virtual void EndFrame(int ticksElapsed) override;
@@ -233,6 +235,12 @@ namespace RenderingKit
 
     void RenderingManager::Clear()
     {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void RenderingManager::Clear(Float4 color)
+    {
+        glClearColor(color.r, color.g, color.b, color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
