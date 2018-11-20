@@ -102,13 +102,17 @@ namespace zfw
     struct Vkey_t;
 
     // core classes
+    //class IAspectVisitor;
     class IBroadcastHandler;
+    struct IComponentType;
     class IConfig;
     class IDecoder;
     class IEncoder;
     class IEngine;
+    //class IEntity2;
     class IEntityHandler;
     class IEntityVisitor;
+    class IEntityWorld2;
     class IEssentials;
     class IFileSystem;
     class IFSObject;
@@ -129,6 +133,7 @@ namespace zfw
     class IScriptAPI;
     class IScriptEnv;
     class IScriptHandler;
+    class ISystem;
     class IVarSystem;
     class IVideoHandler;
 
@@ -145,6 +150,10 @@ namespace zfw
     class IEntity;
     class IScene;
 
+    // built-in components
+    struct Model3D;
+    struct Position;
+
     template <int type>
     struct MessageStruct
     {
@@ -155,6 +164,9 @@ namespace zfw
     {
         return typeid(C);
     }
+
+    template <typename ComponentStruct>
+    IComponentType& GetComponentType();
 
     // h-values for mouse, keyboard events:
     //  h <= -2:    no widget was affected by this event (yet)

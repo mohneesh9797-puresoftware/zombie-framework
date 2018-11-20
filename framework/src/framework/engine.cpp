@@ -2,8 +2,9 @@
 #include "private.hpp"
 
 #include <framework/broadcasthandler.hpp>
-#include <framework/entity.hpp>
+#include <framework/system.hpp>
 #include <framework/entityhandler.hpp>
+#include <framework/entityworld2.hpp>
 #include <framework/errorbuffer.hpp>
 #include <framework/errorcheck.hpp>
 #include <framework/event.hpp>
@@ -156,6 +157,7 @@ namespace zfw
     static ProfilingSection_t profDrawScene = {"IScene::DrawFrame"};
     static ProfilingSection_t profOnFrame = {"IScene::OnFrame"};
     static ProfilingSection_t profOnTicks = {"IScene::OnTicks"};
+    static ProfilingSection_t profSystems = {"ISystem::OnFrame"};
     static ProfilingSection_t profVideoHandler = {"VideoHandler"};
     static ProfilingSection_t profVideoHandler2 = {"VideoHandler"};
 
@@ -204,6 +206,9 @@ namespace zfw
 #ifdef ZOMBIE_WITH_LUA
             virtual shared_ptr<ILuaScriptContext> CreateLuaScriptContext() override;
 #endif
+
+            // Components
+            void                AddSystem(unique_ptr<ISystem> component) override;
 
             // Main loop
             virtual void ChangeScene(shared_ptr<IScene> scene) override;
@@ -285,6 +290,9 @@ namespace zfw
             unique_ptr<IVarSystem> varSystem;
             unique_ptr<IVideoHandler> videoHandler;
 
+            // systems
+            std::vector<unique_ptr<ISystem>> systems;
+
             // synchronization
             li::Mutex ioMutex, logMutex, stdoutMutex;
 
@@ -297,10 +305,8 @@ namespace zfw
 
     static void DumpLog(OutputStream* stream)
     {
-        iterate2 (i, log)
+        for (const auto& entry : log)
         {
-            auto& entry = *i;
-
             auto t = entry.time - clock0;
             stream->write((const char*) sprintf_t<63>("%-10s[%5u.%04u] ", logTypeNames[entry.type], (int)(t / 1000000), (int)(t % 1000000) / 100));
             stream->writeLine(entry.line);
@@ -412,6 +418,11 @@ namespace zfw
         varSystem.reset();
 
         p_ClearLog();
+    }
+
+    void System::AddSystem(unique_ptr<ISystem> component)
+    {
+        this->systems.push_back(move(component));
     }
 
     void System::AssertionFail(const char* expr, const char* functionName, const char* file, int line,
@@ -945,8 +956,9 @@ namespace zfw
 
     void System::p_ClearLog()
     {
-        iterate2(i, log)
-            free((*i).line);
+        for (const auto& entry : log) {
+            free(entry.line);
+        }
 
         log.clear();
     }
@@ -1009,7 +1021,9 @@ namespace zfw
 			profiler->EnterSection(profOnFrame);
 		}
 
-		scene->OnFrame(p_Update());
+		auto dt = p_Update();
+
+		scene->OnFrame(dt);
 
 		if (frameCounter == profileFrame)
 		{
@@ -1018,7 +1032,14 @@ namespace zfw
 		}
 
 		if (tickAccum > 0)
+        {
 			scene->OnTicks(tickAccum);
+
+            for (const auto& system : systems)
+            {
+                system->OnTicks(tickAccum);
+            }
+        }
 
 		if (frameCounter == profileFrame)
 		{
@@ -1027,6 +1048,17 @@ namespace zfw
 		}
 
 		scene->DrawScene();
+
+        if (frameCounter == profileFrame)
+        {
+            profiler->LeaveSection();
+            profiler->EnterSection(profSystems);
+        }
+
+        for (const auto& system : systems)
+        {
+            system->OnFrame(dt);
+        }
 
 		if (frameCounter == profileFrame)
 		{

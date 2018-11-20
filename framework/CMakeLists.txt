@@ -20,6 +20,9 @@ set(sources
 
         include/framework/abstractentity.hpp
         include/framework/app.hpp
+        include/framework/components/model3d.hpp
+        include/framework/components/position.hpp
+        include/framework/componenttype.hpp
         include/framework/base.hpp
         include/framework/bleb/studiobleb.hpp
         include/framework/broadcasthandler.hpp
@@ -27,8 +30,10 @@ set(sources
         include/framework/datamodel.hpp
         include/framework/engine.hpp
         include/framework/entity.hpp
+        include/framework/entity2.hpp
         include/framework/entityhandler.hpp
         include/framework/entityworld.hpp
+        include/framework/entityworld2.hpp
         include/framework/errorbuffer.hpp
         include/framework/errorcheck.hpp
         include/framework/errorcodes.hpp
@@ -80,10 +85,12 @@ set(sources
         src/framework/codecs/bmpcodec.cpp
         src/framework/codecs/jfifcodec.cpp
         src/framework/codecs/lodepngcodec.cpp
+        src/framework/components/builtins.cpp
         src/framework/datamodel.cpp
         src/framework/engine.cpp
         src/framework/entityhandler.cpp
         src/framework/entityworld.cpp
+        src/framework/entityworld2.cpp
         src/framework/filesystem_std.cpp
         src/framework/fsunion.cpp
         src/framework/mediacodechandler.cpp
