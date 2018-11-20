@@ -22,6 +22,7 @@ set(sources
         include/framework/app.hpp
         include/framework/base.hpp
         include/framework/bleb/studiobleb.hpp
+        include/framework/broadcasthandler.hpp
         include/framework/colorconstants.hpp
         include/framework/datamodel.hpp
         include/framework/entity.hpp
@@ -75,6 +76,7 @@ set(sources
         include/ztype/ztype.hpp
 
         src/framework/asprintf.cpp
+        src/framework/broadcasthandler.cpp
         src/framework/codecs/bmpcodec.cpp
         src/framework/codecs/jfifcodec.cpp
         src/framework/codecs/lodepngcodec.cpp

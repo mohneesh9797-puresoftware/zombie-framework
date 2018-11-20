@@ -1,6 +1,7 @@
 
 #include "private.hpp"
 
+#include <framework/broadcasthandler.hpp>
 #include <framework/entity.hpp>
 #include <framework/entityhandler.hpp>
 #include <framework/errorbuffer.hpp>
@@ -183,6 +184,7 @@ namespace zfw
             virtual bool            Startup() override;
 
             // Core Handlers
+            IBroadcastHandler& GetBroadcastHandler() final;
             virtual IEntityHandler* GetEntityHandler(bool createIfNull) override;
             virtual IFileSystem*    GetFileSystem() override { return fsUnion->GetFileSystem(); }
             virtual IMediaCodecHandler* GetMediaCodecHandler(bool createIfNull) override;
@@ -275,6 +277,7 @@ namespace zfw
             bool interactive;
 
             // core handlers
+            unique_ptr<IBroadcastHandler> broadcastHandler;
             shared_ptr<IEntityHandler> entityHandler;
             unique_ptr<IMediaCodecHandler> mediaCodecHandler;
             shared_ptr<IModuleHandler> moduleHandler;
@@ -345,7 +348,8 @@ namespace zfw
 
         scene = nullptr;
         newScene = nullptr;
-        
+
+        broadcastHandler = p_CreateBroadcastHandler();
         entityHandler = nullptr;
         fsUnion = nullptr;
         moduleHandler = nullptr;
@@ -810,6 +814,11 @@ namespace zfw
             var->SetVariable(tokens[0], "1", 0);
         else if (tokens.size() > 1)
             var->SetVariable(tokens[0], tokens[1], 0);
+    }
+
+    IBroadcastHandler& System::GetBroadcastHandler()
+    {
+        return *broadcastHandler;
     }
 
     IEntityHandler* System::GetEntityHandler(bool createIfNull)
