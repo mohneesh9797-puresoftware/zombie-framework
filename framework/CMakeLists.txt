@@ -276,6 +276,7 @@ endif()
 target_include_directories(${PROJECT_NAME} PUBLIC
     include
     dependencies/glm
+    dependencies/GSL/include
     dependencies/reflector/include
 )
 
