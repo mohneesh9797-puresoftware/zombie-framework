@@ -15,6 +15,7 @@
 #include <framework/components/position.hpp>
 #include <framework/componenttype.hpp>
 #include <framework/engine.hpp>
+#include <framework/entityworld2.hpp>
 #include <framework/resourcemanager2.hpp>
 
 #include <unordered_map>
@@ -59,6 +60,7 @@ namespace ntile {
 
         // zfw::ISystem
         void OnFrame(float dt) final;
+        void OnTicks(int ticks) final;
 
     private:
         void p_OnBlockStateChange(WorldBlock* block, BlockStateChange change);
@@ -135,6 +137,7 @@ namespace ntile {
 
         // Sign up for broadcasts
         auto& ibh = sys->GetBroadcastHandler();
+        ibh.SubscribeToMessageType<AnimationTrigerEvent>(*this);
         ibh.SubscribeToMessageType<BlockStateChangeEvent>(*this);
         ibh.SubscribeToMessageType<WorldSwitchedEvent>(*this);
 
@@ -180,8 +183,10 @@ namespace ntile {
         rm->SetRenderState(RK_DEPTH_TEST, true);
 
         // Set up camera
-        //if (player != nullptr)
-        //    camPos = player->GetPos();
+        auto playerPos = g_ew->GetEntityComponent<Position>(g_world.playerEntity);
+        if (playerPos != nullptr) {
+            camPos = playerPos->pos;
+        }
 
         auto camEye = Float3(0.0f, 300.0f, 300.0f);
         cam->SetView(camPos + camEye, camPos, Float3(0.0f, -0.707f, 0.707f));
@@ -215,6 +220,16 @@ namespace ntile {
 
     void ViewSystem::OnMessageBroadcast(intptr_t type, const void* payload) {
         switch (type) {
+        case kAnimationTrigger: {
+            auto data = reinterpret_cast<const AnimationTrigerEvent*>(payload);
+
+            const auto& iter = drawableViewers.find(data->entityId);
+
+            if (iter != drawableViewers.end()) {
+                iter->second->TriggerAnimation(data->animationName);
+            }
+        }
+
         case kBlockStateChangeEvent: {
             auto data = reinterpret_cast<const BlockStateChangeEvent*>(payload);
             this->p_OnBlockStateChange(data->block, data->change);
@@ -225,6 +240,12 @@ namespace ntile {
             camPos = Float3(worldSize.x * 128.0f, worldSize.y * 128.0f, 0.0f);
             break;
         }
+        }
+    }
+
+    void ViewSystem::OnTicks(int ticks) {
+        for (const auto& pair : drawableViewers) {
+            pair.second->OnTicks(ticks);
         }
     }
 
