@@ -8,6 +8,7 @@
 #include "viewsystem.hpp"
 
 #include <framework/app.hpp>
+#include <framework/entityworld2.hpp>
 #include <framework/filesystem.hpp>
 #include <framework/resourcemanager2.hpp>
 #include <framework/engine.hpp>
@@ -29,6 +30,7 @@ namespace ntile
     static IViewSystem* ivs = nullptr;
     unique_ptr<MessageQueue> g_msgQueue;
     unique_ptr<IResourceManager2> g_res;
+    unique_ptr<IEntityWorld2> g_ew;
 
     World g_world;
 
@@ -86,6 +88,8 @@ namespace ntile
 
         g_msgQueue.reset(MessageQueue::Create());
         g_res.reset(g_sys->CreateResourceManager2());
+
+        g_ew = IEntityWorld2::Create(g_sys->GetBroadcastHandler());
 
         return true;
     }
