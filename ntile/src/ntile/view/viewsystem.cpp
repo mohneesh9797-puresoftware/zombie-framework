@@ -11,6 +11,9 @@
 
 #include <framework/broadcasthandler.hpp>
 #include <framework/colorconstants.hpp>
+#include <framework/components/model3d.hpp>
+#include <framework/components/position.hpp>
+#include <framework/componenttype.hpp>
 #include <framework/engine.hpp>
 #include <framework/resourcemanager2.hpp>
 
@@ -21,6 +24,8 @@ namespace ntile {
     using std::make_unique;
     using std::shared_ptr;
     using std::unique_ptr;
+
+    IRenderingManager* irm;
 
     VertexFormat<4> WorldVertex::format {
         sizeof(WorldVertex), {{
@@ -49,10 +54,11 @@ namespace ntile {
         bool Startup(zfw::IEngine* sys, zfw::ErrorBuffer_t* eb, zfw::MessageQueue* eventQueue) override;
 
         // zfw::IBroadcastSubscriber
-        void OnMessageBroadcast(intptr_t type, const void* payload) override;
+        void OnComponentEvent(IEntityWorld2& world, intptr_t entityId, IComponentType& type, void* data, ComponentEvent event) final;
+        void OnMessageBroadcast(intptr_t type, const void* payload) final;
 
         // zfw::ISystem
-        void OnFrame(float dt) override;
+        void OnFrame(float dt) final;
 
     private:
         void p_OnBlockStateChange(WorldBlock* block, BlockStateChange change);
@@ -75,6 +81,9 @@ namespace ntile {
         // Blocks
         std::unordered_map<WorldBlock*, unique_ptr<BlockViewer>> blockViewers;
         IMaterial* blockMaterial;
+
+        // Drawables
+        std::unordered_map<intptr_t, unique_ptr<DrawableViewer>> drawableViewers;
     };
 
     // ====================================================================== //
@@ -96,6 +105,7 @@ namespace ntile {
 
         this->rm = rk->StartupRendering(CoordinateSystem::leftHanded);
         zombie_ErrorCheck(rm);
+        irm = rm;
 
         rm->RegisterResourceProviders(g_res.get());
         g_res->SetTargetState(IResource2::State_t::REALIZED);
@@ -124,10 +134,26 @@ namespace ntile {
         cam->SetVFov(45.0f / 180.0f * 3.14f);
 
         // Sign up for broadcasts
-        sys->GetBroadcastHandler().SubscribeToMessageType<BlockStateChangeEvent>(*this);
-        sys->GetBroadcastHandler().SubscribeToMessageType<WorldSwitchedEvent>(*this);
+        auto& ibh = sys->GetBroadcastHandler();
+        ibh.SubscribeToMessageType<BlockStateChangeEvent>(*this);
+        ibh.SubscribeToMessageType<WorldSwitchedEvent>(*this);
+
+        ibh.SubscribeToComponentType<Model3D>(*this);
 
         return true;
+    }
+
+    void ViewSystem::OnComponentEvent(IEntityWorld2& world, intptr_t entityId, IComponentType& type, void* data, ComponentEvent event) {
+        if (auto model3d = Cast<Model3D>(type, data)) {
+            switch (event) {
+                case ComponentEvent::created:
+                    drawableViewers.emplace(entityId, std::make_unique<DrawableViewer>());
+                    break;
+                case ComponentEvent::destroyed:
+                    drawableViewers.erase(entityId);
+                    break;
+            }
+        }
     }
 
     void ViewSystem::OnFrame(float dt) {
@@ -180,6 +206,9 @@ namespace ntile {
         }
 
         // TODO: Draw entities
+        for (const auto& pair : drawableViewers) {
+            pair.second->Draw(rm, g_ew.get(), pair.first);
+        }
 
         // TODO: Draw UI
     }

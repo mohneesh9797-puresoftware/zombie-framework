@@ -4,6 +4,9 @@
 
 #include <framework/broadcasthandler.hpp>
 #include <framework/colorconstants.hpp>
+#include <framework/components/model3d.hpp>
+#include <framework/components/position.hpp>
+#include <framework/entityworld2.hpp>
 #include <framework/errorcheck.hpp>
 #include <framework/filesystem.hpp>
 #include <framework/graphics.hpp>
@@ -1145,6 +1148,10 @@ namespace ntile
         player->Init();
         player->SetCollisionHandler(std::make_shared<WorldCollisionHandler>());
         world->AddEntity(player);
+
+        auto tree = g_ew->CreateEntity();
+        tree.SetComponent(Position{Float3(512, 512, 0)});
+        tree.SetComponent(Model3D{"ntile/models/prop_tree"});
 
 #ifndef ZOMBIE_CTR
         // Set up UI
