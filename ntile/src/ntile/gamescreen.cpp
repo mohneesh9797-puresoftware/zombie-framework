@@ -1146,6 +1146,11 @@ namespace ntile
         player.SetComponent(AabbCollision {Float3(-6.0f, -6.0f, 0.0f), Float3(6.0f, 6.0f, 24.0f)});
         g_world.playerEntity = player.entityId;
 
+        auto elephant = g_ew->CreateEntity();
+        elephant.SetComponent(Position{Int3(worldSize * Int2(128, 128) + Int2(-50, -50), 48)});
+        elephant.SetComponent(Model3D{"ntile/models/shiroi/shiroi_elephant"});
+        elephant.SetComponent(Motion {});
+
 #ifndef ZOMBIE_CTR
         // Set up UI
         //ui->RemoveAll();
