@@ -230,6 +230,9 @@ namespace RenderingKit
     class IRenderingManagerBackend : public IRenderingManager
     {
         public:
+            static unique_ptr<IRenderingManagerBackend> Create(zfw::ErrorBuffer_t* eb,
+                                                               RenderingKit* rk,
+                                                               CoordinateSystem coordSystem);
             virtual ~IRenderingManagerBackend() {}
 
             virtual bool Startup() = 0;
@@ -279,9 +282,9 @@ namespace RenderingKit
 #endif
 
 #if ZOMBIE_API_VERSION >= 201901
-            IRenderingManager*          StartupRendering() override;
+            IRenderingManager*          StartupRendering(CoordinateSystem coordSystem) override;
 #else
-            IRenderingManager*          StartupRendering();
+            IRenderingManager*          StartupRendering(CoordinateSystem coordSystem);
 #endif
 
 #if ZOMBIE_API_VERSION < 201901
@@ -298,7 +301,7 @@ namespace RenderingKit
     };
 
     shared_ptr<ICamera>             p_CreateCamera(zfw::ErrorBuffer_t* eb, RenderingKit* rk,
-            IRenderingManagerBackend* rm, const char* name);
+            IRenderingManagerBackend* rm, const char* name, CoordinateSystem coordSystem);
     shared_ptr<IGLFontFace>         p_CreateFontFace(zfw::ErrorBuffer_t* eb, RenderingKit* rk,
             IRenderingManagerBackend* rm, const char* name);
     shared_ptr<IGLGeomBuffer>       p_CreateGeomBuffer(zfw::ErrorBuffer_t* eb, RenderingKit* rk,
@@ -333,6 +336,5 @@ namespace RenderingKit
 
     void p_DrawChunk(IRenderingManagerBackend* rm, IGeomChunk* gc_in, GLenum mode);
 
-    IRenderingManagerBackend* CreateRenderingManager(zfw::ErrorBuffer_t* eb, RenderingKit* rk);
     IWindowManagerBackend* CreateSDLWindowManager(zfw::ErrorBuffer_t* eb, RenderingKit* rk);
 }
