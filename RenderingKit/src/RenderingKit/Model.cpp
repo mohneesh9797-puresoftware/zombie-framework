@@ -238,6 +238,7 @@ namespace RenderingKit
                                accessor.count,
                                componentType,
                                reinterpret_cast<GLvoid*>(bufferView.byteOffset + accessor.byteOffset));
+                GLStateTracker::IncreaseDrawCallCounter(accessor.count / 3);
 
                 rm->CheckErrors("GLModel::p_DrawNode");
 
