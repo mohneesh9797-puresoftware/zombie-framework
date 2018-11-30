@@ -876,10 +876,10 @@ namespace ntile
                             motion->nudgeDirection.x += ((ev->input.flags & VKEY_PRESSED) ? +1 : -1);
 
                         if (Vkey::Test(ev->input, controls[Controls::up]))
-                            motion->nudgeDirection.y += ((ev->input.flags & VKEY_PRESSED) ? -1 : +1);
+                            motion->nudgeDirection.y += ((ev->input.flags & VKEY_PRESSED) ? +1 : -1);
 
                         if (Vkey::Test(ev->input, controls[Controls::down]))
-                            motion->nudgeDirection.y += ((ev->input.flags & VKEY_PRESSED) ? +1 : -1);
+                            motion->nudgeDirection.y += ((ev->input.flags & VKEY_PRESSED) ? -1 : +1);
 
 //                        if (Vkey::Test(ev->input, controls[Controls::attack]) && (ev->input.flags & VKEY_PRESSED))
 //                            player->Hack_SlashAnim();
@@ -1147,7 +1147,7 @@ namespace ntile
         g_world.playerEntity = player.entityId;
 
         auto elephant = g_ew->CreateEntity();
-        elephant.SetComponent(Position{Int3(worldSize * Int2(128, 128) + Int2(-50, -50), 48)});
+        elephant.SetComponent(Position{Int3(worldSize * Int2(128, 128) + Int2(-50, -50), 0)});
         elephant.SetComponent(Model3D{"ntile/models/shiroi/shiroi_elephant"});
         elephant.SetComponent(Motion {});
 
