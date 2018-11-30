@@ -218,6 +218,12 @@ namespace ntile {
         }
 
         // TODO: Draw UI
+
+        // When all drawing commands are sent out, do the bookkeeping
+
+        for (const auto& pair : drawableViewers) {
+            pair.second->OnFrame(dt);
+        }
     }
 
     void ViewSystem::OnMessageBroadcast(intptr_t type, const void* payload) {
