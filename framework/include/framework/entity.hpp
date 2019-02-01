@@ -108,6 +108,7 @@ namespace zfw
             virtual void            OnRemoveEntity(EntityWorld* world, IEntity* ent) = 0;
     };
 
+#if ZOMBIE_API_VERSION < 201901
     class IEntityReflection
     {
         protected:
@@ -119,6 +120,7 @@ namespace zfw
             virtual size_t          GetNumProperties() = 0;
             virtual bool            GetRWProperties(NamedValuePtr* buffer, size_t count) = 0;
     };
+#endif
 
     template <class C>
     IEntity* CreateInstance()

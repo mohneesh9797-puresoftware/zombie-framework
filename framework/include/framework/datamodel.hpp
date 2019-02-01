@@ -9,6 +9,7 @@
 
 namespace zfw
 {
+#if ZOMBIE_API_VERSION < 201901
     // data types enumeration
     enum ValueType
     {
@@ -28,6 +29,7 @@ namespace zfw
 
         T_MAX
     };
+#endif
 
     // data types declaration
     typedef glm::ivec2 Int2;
@@ -50,6 +52,7 @@ namespace zfw
     typedef glm::tvec3<short, glm::defaultp> Short3;
     typedef glm::tvec4<short, glm::defaultp> Short4;
 
+#if ZOMBIE_API_VERSION < 201901
     // data model structures
     struct NamedValueDesc
     {
@@ -98,4 +101,31 @@ namespace zfw
         SetNamedValueDesc(v.desc, name, type);
         v.value = value;
     }
+#endif
+
+    struct ValueAccessor {
+        GenericType& type;
+        void* value;
+    };
+
+    struct GenericType {
+        const char* name;
+        size_t valueSize;
+        bool isArray;
+        bool isStruct;
+
+        void (*New)(const GenericType& this_, void* value);
+        void (*Delete)(const GenericType& this_, void* value);
+    };
+
+//    struct ArrayType : GenericType {
+//        size_t arrayLength;
+//    };
+
+    struct StructType : GenericType {
+        size_t numFields;
+        const char** fieldNames;
+
+        ValueAccessor (*AccessField)(const StructType& this_, void* value, size_t index);
+    };
 }

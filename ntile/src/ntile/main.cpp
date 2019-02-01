@@ -13,6 +13,7 @@
 #include <framework/resourcemanager2.hpp>
 #include <framework/engine.hpp>
 #include <framework/varsystem.hpp>
+#include <framework/database/keyvaluedatabase.hpp>
 
 #ifdef _3DS
 #include <framework/ctr/ctr.hpp>
@@ -37,6 +38,23 @@ namespace ntile
     NanoUI nui;
 
     Int2 r_pixelRes, r_mousePos;
+
+    struct Map {
+        int id;
+        const char* name;
+        const char* region;
+    };
+
+    static void TestDb() {
+        auto db = IKeyValueDatabase::CreateCsvDatabase(g_sys->GetFileSystem(), "../db");
+
+        Map map;
+        if (!db->ById("maps", 1, &map))
+            return;
+
+        printf("Map=%d, %s, %s\n", map.id, map.name, map.region);
+        exit(0);
+    }
 
     static bool SysInit(int argc, char** argv)
     {
@@ -80,6 +98,8 @@ namespace ntile
         auto motionSystem = IMotionSystem::Create(g_sys->GetBroadcastHandler());
         motionSystem->Attach(g_ew.get());
         g_sys->AddSystem(move(motionSystem));
+
+        TestDb();
 
         return true;
     }
@@ -208,5 +228,13 @@ namespace ntile
             GameMain(argc, argv);
 
         return 0;
+    }
+}
+
+namespace zfw {
+    template <>
+    zfw::IKeyValueRecordMapper& GetMapper<zfw::IKeyValueRecordMapper, ntile::Map>() {
+        static ntile::MapKeyValueRecordMapper mapper;
+        return mapper;
     }
 }

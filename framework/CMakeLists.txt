@@ -29,6 +29,7 @@ set(sources
         include/framework/bleb/studiobleb.hpp
         include/framework/broadcasthandler.hpp
         include/framework/colorconstants.hpp
+        include/framework/database/keyvaluedatabase.hpp
         include/framework/datamodel.hpp
         include/framework/engine.hpp
         include/framework/entity.hpp
@@ -88,6 +89,7 @@ set(sources
         src/framework/codecs/jfifcodec.cpp
         src/framework/codecs/lodepngcodec.cpp
         src/framework/components/builtins.cpp
+        src/framework/database/csvdatabase.cpp
         src/framework/datamodel.cpp
         src/framework/engine.cpp
         src/framework/entityhandler.cpp
@@ -191,6 +193,7 @@ add_library(${library} ${sources})
 
 target_compile_definitions(${library} PUBLIC $<$<CONFIG:DEBUG>:ZOMBIE_DEBUG>)
 target_compile_features(${library} PUBLIC cxx_std_14)
+target_include_directories(${library} PRIVATE dependencies)
 
 if (ZOMBIE_API_VERSION)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC -DZOMBIE_API_VERSION=${ZOMBIE_API_VERSION})

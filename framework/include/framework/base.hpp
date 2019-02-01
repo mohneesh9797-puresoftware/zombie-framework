@@ -155,6 +155,11 @@ namespace zfw
     struct Model3D;
     struct Position;
 
+    // framework/datamodel/datamodel.hpp
+    struct ArrayType;
+    struct GenericType;
+    struct StructType;
+
     template <int type>
     struct MessageStruct
     {
@@ -168,6 +173,12 @@ namespace zfw
 
     template <typename ComponentStruct>
     IComponentType& GetComponentType();
+
+    template <typename T>
+    StructType& GetStruct();
+
+    template <typename T>
+    GenericType& GetTypedef();
 
     // h-values for mouse, keyboard events:
     //  h <= -2:    no widget was affected by this event (yet)

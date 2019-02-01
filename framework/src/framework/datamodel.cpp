@@ -4,6 +4,7 @@
 
 namespace zfw
 {
+#if ZOMBIE_API_VERSION < 201901
     const char* DataModel::GetTypeName(ValueType type)
     {
         switch (type)
@@ -54,4 +55,5 @@ namespace zfw
                 return false;
         }
     }
+#endif
 }
