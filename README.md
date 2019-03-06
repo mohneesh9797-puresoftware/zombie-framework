@@ -1,5 +1,7 @@
 # zombie-framework
 
+![screenshot](https://raw.githubusercontent.com/minexew/zombie-framework/master/screenshots/screenshot-20120627-224725.png)
+
 ## Building with Emscripten
 `python disttool-web.py <path-to-project> <emscripten-path>`
 
