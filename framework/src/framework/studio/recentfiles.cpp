@@ -113,8 +113,9 @@ namespace studio
 
     bool RecentFilesImpl::StreamSave(OutputStream* stream)
     {
-        iterate2 (i, items)
-            stream->writeLine((*i));
+        for (auto& item : items) {
+            stream->writeLine(item);
+        }
 
         return true;
     }
