@@ -30,6 +30,8 @@ namespace zfw
             // public variables:
             //  sys_tickrate                (int)
 
+            virtual ~IEngine() {}
+
             virtual bool Init(ErrorBuffer_t* eb, int flags) = 0;
             virtual void Shutdown() = 0;
 
@@ -107,10 +109,8 @@ namespace zfw
             virtual IResourceManager2*  CreateResourceManager2() = 0;
             virtual ShaderPreprocessor* CreateShaderPreprocessor() = 0;
             virtual Timer*              CreateTimer() = 0;
-
-        protected:
-            ~IEngine() {}
     };
 
     IEngine* CreateEngine();
+    std::unique_ptr<IEngine> CreateEngine2(ErrorBuffer_t* eb, int initFlags, int argc, char** argv);
 }

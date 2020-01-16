@@ -13,7 +13,8 @@ On Fedora, install `mesa-libGLU-devel SDL2-devel`
 
 Name | Type | Framework Branch | status
 -----|------|------------------|-------
-ntile|game|framework / API 2019.01|being reworked
+Lanthaia|game|framework / API 2020.01|toying around
+ntile|game|framework / API 2019.01|suspended ECS rework
 Container|framework|framework / API 2017.01|active
 tools/mapcompiler|tool|framework / API 2017.01|active
 RenderingKit|library|framework|active
