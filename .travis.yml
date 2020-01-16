@@ -18,6 +18,7 @@ env:
   - COMPONENT=examples/rendering-kit-demo TARGET=rendering-kit-demo
   - COMPONENT=examples/ContainerDeferredShading TARGET=ContainerDeferredShading
   - COMPONENT=examples/ContainerHelloWorld TARGET=ContainerHelloWorld
+  - COMPONENT=Lanthaia TARGET=Lanthaia
   - COMPONENT=ntile TARGET=ntile
   - COMPONENT=tools/mapcompiler TARGET=mapcompiler
   - COMPONENT=WorldCraft TARGET=worldcraft2
