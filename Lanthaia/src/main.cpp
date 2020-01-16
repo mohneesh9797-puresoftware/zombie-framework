@@ -3,22 +3,28 @@
  *
  * Data packing: bleb or zip
  * ECS: entt
- * Game UI: ?
+ * Game UI: imgui?
  * I/O: littl TcpSocket for now
  * Rendering: RenderingKit, migrate to bgfx-based solution?
  * Scripting: ?
  */
 
+#include "RenderingManager.hpp"
+#include "TitleScene.hpp"
+
+#include <framework/app.hpp>
+#include <framework/engine.hpp>
+#include <framework/messagequeue.hpp>
+#include <framework/utility/errorbuffer.hpp>
+
 #if defined(_DEBUG) && defined(_MSC_VER)
 #include <crtdbg.h>
 #endif
 
-#include <framework/app.hpp>
-#include <framework/engine.hpp>
-#include <framework/utility/errorbuffer.hpp>
-
 namespace Client
 {
+    using std::make_shared;
+    using std::make_unique;
     using std::unique_ptr;
     using zfw::ErrorBuffer_t;
     using zfw::IEngine;
@@ -44,6 +50,13 @@ namespace Client
         if (!engine) {
             return;
         }
+
+        auto eventQueue = zfw::MessageQueue::Create();
+        auto viewSystem = make_unique<RenderingManager>();
+        viewSystem->Startup(engine.get(), g_eb, eventQueue);
+
+        engine->ChangeScene(make_shared<TitleScene>(*engine, *eventQueue));
+        engine->RunMainLoop();
     }
 
     ClientEntryPoint
