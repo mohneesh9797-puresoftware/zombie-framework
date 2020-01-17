@@ -2,6 +2,7 @@
 
 #include <framework/engine.hpp>
 #include <framework/errorcheck.hpp>
+#include <framework/utility/essentials.hpp>
 #include <RenderingKit/utility/RKVideoHandler.hpp>
 
 using namespace RenderingKit;
@@ -9,7 +10,7 @@ using std::make_unique;
 
 namespace Client {
 
-bool RenderingManager::Startup(zfw::IEngine* sys, zfw::ErrorBuffer_t* eb, zfw::MessageQueue* eventQueue) {
+bool RenderingManager::Startup(zfw::IEngine* sys, zfw::MessageQueue* eventQueue) {
     auto imh = sys->GetModuleHandler(true);
 
     this->rk.reset(RenderingKit::TryCreateRenderingKit(imh));

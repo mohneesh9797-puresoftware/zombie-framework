@@ -15,6 +15,8 @@ set(sources
         src/RenderingManager.hpp
         src/TitleScene.cpp
         src/TitleScene.hpp
+        src/system/LoginSystem.cpp
+        src/system/LoginSystem.hpp
 )
 
 add_subdirectory(../framework ${CMAKE_BINARY_DIR}/build-framework)

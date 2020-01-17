@@ -3,13 +3,15 @@
 
 #include <framework/scene.hpp>
 
+#include <PubSub.hpp>
+
 namespace Client {
 
 class TitleScene : public zfw::IScene {
 public:
-    TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue) : engine(engine), eventQueue(eventQueue) {}
+    TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker);
 
-    bool Init() override { return true; }
+    bool Init() override;
     void Shutdown() override {}
 
     bool AcquireResources() override { return true; }
@@ -20,6 +22,9 @@ public:
 private:
     zfw::IEngine& engine;
     zfw::MessageQueue& eventQueue;
+
+    PubSub::Pipe myPipe;
+    PubSub::Subscription sub;
 };
 
 }

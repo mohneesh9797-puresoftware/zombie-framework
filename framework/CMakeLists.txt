@@ -17,6 +17,8 @@ add_subdirectory(dependencies/littl)
 
 set(sources
         dependencies/reflector/include/reflection/default_error_handler.cpp
+        dependencies/PubSub/PubSub.hpp
+        dependencies/PubSub/PubSub.cpp
 
         include/framework/abstractentity.hpp
         include/framework/app.hpp
@@ -269,6 +271,7 @@ if (ZOMBIE_WITH_LUA)
     target_compile_definitions(${library} PUBLIC -DZOMBIE_WITH_LUA=1)
 endif()
 
+# Other stuff
 if (UNIX)
     target_link_libraries(${library} dl)
     target_link_libraries(${library} pthread)
@@ -277,6 +280,7 @@ endif()
 target_include_directories(${PROJECT_NAME} PUBLIC
     include
     dependencies/glm
+    dependencies/PubSub
     dependencies/reflector/include
 )
 

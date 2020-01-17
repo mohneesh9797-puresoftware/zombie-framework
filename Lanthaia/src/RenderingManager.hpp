@@ -7,7 +7,7 @@ namespace Client {
 
 class RenderingManager {
 public:
-    bool Startup(zfw::IEngine* sys, zfw::ErrorBuffer_t* eb, zfw::MessageQueue* eventQueue);
+    bool Startup(zfw::IEngine* sys, zfw::MessageQueue* eventQueue);
 
 private:
     std::unique_ptr<RenderingKit::IRenderingKit> rk;
