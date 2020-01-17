@@ -53,9 +53,11 @@ namespace Client
 
         auto eventQueue = zfw::MessageQueue::Create();
         auto viewSystem = make_unique<RenderingManager>();
-        viewSystem->Startup(engine.get(), g_eb, eventQueue);
+        viewSystem->Startup(engine.get(), eventQueue);
 
-        engine->ChangeScene(make_shared<TitleScene>(*engine, *eventQueue));
+        PubSub::Broker broker;
+
+        engine->ChangeScene(make_shared<TitleScene>(*engine, *eventQueue, broker));
         engine->RunMainLoop();
     }
 
