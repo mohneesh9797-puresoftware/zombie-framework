@@ -17,6 +17,8 @@ add_subdirectory(dependencies/littl)
 
 set(sources
         dependencies/reflector/include/reflection/default_error_handler.cpp
+        dependencies/PubSub/PubSub.hpp
+        dependencies/PubSub/PubSub.cpp
 
         include/framework/abstractentity.hpp
         include/framework/app.hpp
@@ -278,6 +280,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     include
     dependencies/glm
     dependencies/GSL/include
+    dependencies/PubSub
     dependencies/reflector/include
 )
 
