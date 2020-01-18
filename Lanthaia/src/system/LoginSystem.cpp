@@ -35,6 +35,7 @@ void LoginSession::Login(const std::string& username, const std::string& passwor
     socket->send( message );
 
     SetState(State::loggingIn);
+    this->username = username;
 }
 
 optional<LoginSession::StateUpdate> LoginSession::Update() {
@@ -115,6 +116,47 @@ optional<LoginSession::StateUpdate> LoginSession::Update() {
             }
             break;
         }
+
+        case State::loggedIn: {
+            li::ArrayIOStream message;
+
+            if (!socket->receive(message)) {
+                break;
+            }
+
+            message.dump();
+            auto messageName = message.readString();
+
+            if ( messageName == "login.character_info" ) {
+                uint16_t numCharacters = 0;
+                message.readLE<uint16_t>(&numCharacters);
+
+                if ( numCharacters < 1 )
+                {
+                    message.clear();
+                    message.writeString( "login.create_character" );
+                    message.writeString( username.c_str() );
+                    message.writeLE<uint16_t>( 0 );
+                    socket->send( message );
+                }
+                else
+                {
+                    message.clear();
+                    message.writeString( "login.enter_world" );
+                    message.writeLE<uint16_t>( 0 );
+                    socket->send( message );
+                }
+            }
+            else if ( messageName == "login.entering_world" ) {
+                // Stop reading data from the socket, since whatever comes next doesn't belong to us anymore
+                SetState(State::enteringWorld);
+            }
+
+            break;
+        }
+
+        default:
+            ;
     }
 
     return nullopt;

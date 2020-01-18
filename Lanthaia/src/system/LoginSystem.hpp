@@ -26,7 +26,8 @@ public:
 //        registering,
         loggingIn,
         failed,
-        loggedIn
+        loggedIn,
+        enteringWorld,
     };
 
     struct StateUpdate { State state; std::string message; };
@@ -43,6 +44,7 @@ private:
 
     State state = State::idle;
     LoginServerInfo serverInfo;
+    std::string username;
 
     std::unique_ptr<li::TcpSocket> socket;
 };
