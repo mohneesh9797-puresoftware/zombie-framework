@@ -85,7 +85,7 @@ namespace ntile
 
             for (yy = y[0]; yy < y[1]; yy++)
             {
-                register int c;
+                int c;
 
                 if (pm.info.format == PixmapFormat_t::RGB8)
                     c = memcmp(&pm.pixelData[(yy * pm.info.size.x + xx) * 3], "\xFF\xFF\xFF", 3);
