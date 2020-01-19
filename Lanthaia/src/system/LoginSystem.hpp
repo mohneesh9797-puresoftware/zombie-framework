@@ -14,6 +14,10 @@ struct LoginServerInfo {
     std::string realmNews;
 };
 
+struct WorldSocketHandover {
+    std::unique_ptr<li::TcpSocket> socket;
+};
+
 class LoginSession {
 public:
     enum class State {
@@ -34,6 +38,7 @@ public:
 
     [[nodiscard]] LoginServerInfo GetServerInfo() const { return serverInfo; }
     [[nodiscard]] State GetState() const { return state; }
+    std::unique_ptr<li::TcpSocket> HandoverSocket() { return std::move(socket); }
     std::optional<StateUpdate> Update();
 
     void ConnectTo(std::tuple<const char*, uint16_t> hostAndPort);

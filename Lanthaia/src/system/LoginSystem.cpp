@@ -150,6 +150,7 @@ optional<LoginSession::StateUpdate> LoginSession::Update() {
             else if ( messageName == "login.entering_world" ) {
                 // Stop reading data from the socket, since whatever comes next doesn't belong to us anymore
                 SetState(State::enteringWorld);
+                return StateUpdate {GetState(), ""};
             }
 
             break;
@@ -175,6 +176,9 @@ void LoginSystem::OnTicks(int ticks) {
 
         if (stateUpdate->state == LoginSession::State::readyToLogin) {
             sub.getBroker().publish<LoginServerInfo>(LoginServerInfo { session.GetServerInfo() });
+        }
+        else if (stateUpdate->state == LoginSession::State::enteringWorld) {
+            sub.getBroker().publish<WorldSocketHandover>(WorldSocketHandover { session.HandoverSocket() });
         }
     }
 

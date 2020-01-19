@@ -1,4 +1,5 @@
 #include "system/LoginSystem.hpp"
+#include "GameScene.hpp"
 #include "TitleScene.hpp"
 
 #include <framework/engine.hpp>
@@ -7,12 +8,14 @@
 
 namespace Client {
 
+using std::make_shared;
 using std::make_unique;
 
-TitleScene::TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker)
-        : engine(engine), eventQueue(eventQueue), sub(broker, myPipe) {
+TitleScene::TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker, RenderingManager& r)
+        : engine(engine), eventQueue(eventQueue), sub(broker, myPipe), r(r) {
     sub.add<LoginServerInfo>();
     sub.add<LoginSession::StateUpdate>();
+    sub.add<WorldSocketHandover>();
 }
 
 bool TitleScene::Init() {
@@ -33,6 +36,11 @@ void TitleScene::OnTicks(int ticks) {
             if (update->state == LoginSession::State::readyToLogin) {
                 sub.getBroker().publish<LoginRequest>("minexew", "password");
             }
+        }
+        else if (auto update = msg->cast<WorldSocketHandover>()) {
+            engine.Printf(zfw::kLogInfo, "Entering world");
+            auto gameScene = make_shared<GameScene>(r);
+            engine.ChangeScene(gameScene);
         }
     }
 
