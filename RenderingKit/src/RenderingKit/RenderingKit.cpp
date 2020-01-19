@@ -27,12 +27,16 @@ namespace RenderingKit
         return shaderPreprocessor.get();
     }
 
+#if ZOMBIE_API_VERSION >= 202001
+    bool RenderingKit::Init(IEngine* sys)
+#else
     bool RenderingKit::Init(IEngine* sys, ErrorBuffer_t* eb, IRenderingKitHost* host)
+#endif
     {
         SetEssentials(sys->GetEssentials());
 
         this->sys = sys;
-        this->eb = eb;
+        this->eb = sys->GetEssentials()->GetErrorBuffer();
 
         wm.reset(CreateSDLWindowManager(eb, this));
 

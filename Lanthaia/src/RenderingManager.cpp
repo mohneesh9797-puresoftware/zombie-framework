@@ -17,13 +17,15 @@ bool RenderingManager::Startup(zfw::IEngine* sys, zfw::MessageQueue* eventQueue)
     this->rk.reset(RenderingKit::TryCreateRenderingKit(imh));
     zombie_ErrorCheck(rk);
 
-    if (!rk->Init(sys, sys->GetEssentials()->GetErrorBuffer(), nullptr))
+    if (!rk->Init(sys)) {
         return false;
+    }
 
     auto wm = rk->GetWindowManager();
 
-    if (!wm->LoadDefaultSettings(nullptr) || !wm->ResetVideoOutput())
+    if (!wm->LoadDefaultSettings(nullptr) || !wm->ResetVideoOutput()) {
         return false;
+    }
 
     this->rm = rk->StartupRendering(CoordinateSystem::rightHanded);
     zombie_ErrorCheck(rm);
