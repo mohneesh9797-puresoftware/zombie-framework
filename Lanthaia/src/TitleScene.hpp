@@ -7,9 +7,11 @@
 
 namespace Client {
 
+class RenderingManager;
+
 class TitleScene : public zfw::IScene {
 public:
-    TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker);
+    TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker, RenderingManager& r);
 
     bool Init() override;
     void Shutdown() override {}
@@ -25,6 +27,8 @@ private:
 
     PubSub::Pipe myPipe;
     PubSub::Subscription sub;
+
+    RenderingManager& r;
 };
 
 }

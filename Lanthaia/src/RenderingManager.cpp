@@ -1,5 +1,6 @@
 #include "RenderingManager.hpp"
 
+#include <framework/colorconstants.hpp>
 #include <framework/engine.hpp>
 #include <framework/errorcheck.hpp>
 #include <framework/utility/essentials.hpp>
@@ -32,6 +33,10 @@ bool RenderingManager::Startup(zfw::IEngine* sys, zfw::MessageQueue* eventQueue)
     sys->SetVideoHandler(make_unique<RKVideoHandler>(rm, wm, eventQueue));
 
     return true;
+}
+
+void RenderingManager::DrawWorld() {
+    rm->Clear(zfw::COLOUR_WHITE);
 }
 
 }

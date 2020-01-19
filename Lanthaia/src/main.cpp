@@ -57,7 +57,7 @@ namespace Client
 
         PubSub::Broker broker;
 
-        engine->ChangeScene(make_shared<TitleScene>(*engine, *eventQueue, broker));
+        engine->ChangeScene(make_shared<TitleScene>(*engine, *eventQueue, broker, *viewSystem));
         engine->RunMainLoop();
     }
 
