@@ -264,7 +264,11 @@ namespace RenderingKit
         public:
             RenderingKit();
 
+#if ZOMBIE_API_VERSION >= 202001
+            bool Init(zfw::IEngine* engine) override;
+#else
             virtual bool Init(zfw::IEngine* sys, zfw::ErrorBuffer_t* eb, IRenderingKitHost* host) override;
+#endif
 
 #if ZOMBIE_API_VERSION >= 201901
             IRenderingManager*          StartupRendering() override;

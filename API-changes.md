@@ -1,3 +1,7 @@
+2020.01:
+
+	- RenderingKit: more straightforward initialization
+
 2019.01
 
 	- RenderingKit: less ambigous initialization
@@ -6,7 +10,7 @@
 
 	- RenderingKit: remove SetTexture(const char* name, shared_ptr<ITexture>&& texture) overload
 	- RenderingKit: remove some methods from IDeferredShadingManager (replacement = ?)
-	- RenderingKit: remove support for IResourceManager
+	- RenderingKit: remove support for IResourceManager (use IResourceManager2)
 	- RenderingKit: remove BasicPainter::InitWithShader(IRenderingManager* rm, shared_ptr<IShader> program);
 
 2016.01

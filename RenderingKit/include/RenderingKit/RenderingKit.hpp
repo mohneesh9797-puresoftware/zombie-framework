@@ -606,8 +606,12 @@ namespace RenderingKit
         public:
             virtual ~IRenderingKit() {}
 
-			// `host` is deprecated and ignored
-            virtual bool Init(zfw::IEngine* sys, zfw::ErrorBuffer_t* eb, IRenderingKitHost* host) = 0;
+#if ZOMBIE_API_VERSION >= 202001
+        virtual bool Init(zfw::IEngine* engine) = 0;
+#else
+        // `host` is deprecated and ignored
+        virtual bool Init(zfw::IEngine* sys, zfw::ErrorBuffer_t* eb, IRenderingKitHost* host) = 0;
+#endif
 
 #if ZOMBIE_API_VERSION >= 201901
             virtual IRenderingManager*  StartupRendering() = 0;
