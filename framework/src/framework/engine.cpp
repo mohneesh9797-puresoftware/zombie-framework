@@ -391,8 +391,13 @@ namespace zfw
         varSystem.reset(p_CreateVarSystem(this));
         varSystem->SetVariable("sys_tickrate", "60", 0);
 
-        if (!(flags & kSysNoInitFileSystem))
+        if (!(flags & kSysNoInitFileSystem)) {
             fsUnion.reset(p_CreateFSUnion(s_eb));
+
+            if (!(flags & kSysNoDefaultFileSystem)) {
+                this->AddFileSystem(p_CreateStdFileSystem(eb, "", kFSAccessStat | kFSAccessRead), 0);
+            }
+        }
 
         return true;
     }

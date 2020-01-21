@@ -22,6 +22,8 @@ namespace zfw
 
 		/** Currently this affects the way error messages are displayed */
         kSysNonInteractive = 2,
+
+        kSysNoDefaultFileSystem = 3,
     };
 
     class IEngine
