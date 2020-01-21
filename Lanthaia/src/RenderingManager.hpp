@@ -2,6 +2,7 @@
 #define LANTHAIA_RENDERINGMANAGER_HPP
 
 #include <RenderingKit/RenderingKit.hpp>
+#include <RenderingKit/utility/BasicPainter.hpp>
 
 namespace Client {
 
@@ -14,6 +15,10 @@ public:
 private:
     std::unique_ptr<RenderingKit::IRenderingKit> rk;
     RenderingKit::IRenderingManager* rm;
+
+    // TODO API: instances shouldn't be necessary
+    RenderingKit::BasicPainter3D<> bp3d;
+    RenderingKit::BasicPainter2D<> bp2d;
 };
 
 }
