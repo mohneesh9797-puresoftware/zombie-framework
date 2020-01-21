@@ -250,7 +250,6 @@ namespace RenderingKit
     // Resources
 
     /**
-     * TODO: No need to be this opaque. Camera should be entirely a client-side utility.
      * TODO: It is unclear which methods need to be called and in which order. This should be simplified and perhaps
      *       made less stateful (there is little to gain by caching the matrices).
      */

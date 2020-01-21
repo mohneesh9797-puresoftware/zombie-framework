@@ -2,6 +2,7 @@
 #include "RenderingKitImpl.hpp"
 #include <RenderingKit/RenderingKitUtility.hpp>
 #include <RenderingKit/WorldGeometry.hpp>
+#include <RenderingKit/utility/Camera.hpp>
 
 #include <framework/resourcemanager.hpp>
 #include <framework/resourcemanager2.hpp>
@@ -15,6 +16,7 @@
 namespace RenderingKit
 {
     using namespace zfw;
+    using std::make_shared;
     using std::make_unique;
 
     // FIXME: Bounds checking for all usages
@@ -108,8 +110,8 @@ namespace RenderingKit
             virtual void SetupMaterial(IGLMaterial* material, const MaterialSetupOptions& options) override;
 
             void GetModelViewProjectionMatrices(glm::mat4x4** projection_out, glm::mat4x4** modelView_out) final {
-                *projection_out = projectionCurrent;
-                *modelView_out = modelViewCurrent;
+                *projection_out = &projectionCurrent;
+                *modelView_out = &modelViewCurrent;
             }
 
             GlobalCache& GetGlobalCache() override { return globalCache; }
@@ -155,7 +157,7 @@ namespace RenderingKit
             Int2 windowSize, framebufferSize;
             Int2 viewportPos, viewportSize;
 
-            glm::mat4x4* projectionCurrent, * modelViewCurrent;
+            glm::mat4x4 projectionCurrent, modelViewCurrent;
 
             void p_SetRenderBuffer(IGLRenderBuffer* rb);
 
@@ -167,7 +169,6 @@ namespace RenderingKit
             int fpsNumFrames;
 
             // Private resources
-            shared_ptr<ICamera> cam;       // used for shortcut methods (SetProjectionOrtho)
             VertexCache_t vertexCache;
 
             // Material Override
@@ -197,8 +198,6 @@ namespace RenderingKit
         this->rk = rk;
 
         fpsTimer.reset(rk->GetEngine()->CreateTimer());
-
-        cam = p_CreateCamera(eb, rk, this, "RenderingManager/cam", coordSystem);
 
         vertexCache.vertexFormat = nullptr;
         vertexCache.material = nullptr;
@@ -301,7 +300,7 @@ namespace RenderingKit
 
     shared_ptr<ICamera> RenderingManager::CreateCamera(const char* name)
     {
-        return p_CreateCamera(eb, rk, this, name, coordSystem);
+        return make_shared<Camera>(name, coordSystem);
     }
 
     shared_ptr<IDeferredShadingManager> RenderingManager::CreateDeferredShadingManager()
@@ -792,10 +791,10 @@ namespace RenderingKit
 
         // This sure smells of a hack.
         // TODO: Document why we don't own modelViewCurrent in the first place
-        auto prev = *modelViewCurrent;
-        *modelViewCurrent = *modelViewCurrent * transform;
+        auto prev = modelViewCurrent;
+        modelViewCurrent = modelViewCurrent * transform;
         this->DrawPrimitives(material, primitiveType, gc);
-        *modelViewCurrent = prev;
+        modelViewCurrent = prev;
     }
 
     void RenderingManager::EndFrame(int ticksElapsed)
@@ -990,7 +989,7 @@ namespace RenderingKit
     {
         VertexCacheFlush();
 
-        static_cast<IGLCamera*>(camera)->GLSetUpMatrices(viewportSize, projectionCurrent, modelViewCurrent);
+        static_cast<Camera*>(camera)->BuildProjectionModelViewMatrices(viewportSize, &projectionCurrent, &modelViewCurrent);
     }
 
     void RenderingManager::SetClearColour(const Float4& colour)
@@ -1016,19 +1015,15 @@ namespace RenderingKit
         //glMatrixMode(GL_PROJECTION);
         //glLoadMatrixf(&projection[0][0]);
 
-        // TODO: Not quite happy about this
-
-        static glm::mat4x4 projection_;
-
-        projection_ = projection;
-        this->projectionCurrent = &projection_;
+        this->projectionCurrent = projection;
     }
 
     void RenderingManager::SetProjectionOrthoScreenSpace(float nearZ, float farZ)
     {
-        cam->SetClippingDist(nearZ, farZ);
-        cam->SetOrthoScreenSpace();
-        SetCamera(cam.get());
+        Camera cam(coordSystem);
+        cam.SetClippingDist(nearZ, farZ);
+        cam.SetOrthoScreenSpace();
+        SetCamera(&cam);
     }
 
     void RenderingManager::SetRenderState(RKRenderStateEnum_t state, int value)
@@ -1144,7 +1139,7 @@ namespace RenderingKit
         if (materialOverride != nullptr)
             material = materialOverride;
 
-        material->GLSetup(options, *projectionCurrent, *modelViewCurrent);
+        material->GLSetup(options, projectionCurrent, modelViewCurrent);
     }
 
     void* RenderingManager::VertexCacheAlloc(IVertexFormat* vertexFormat, IMaterial* material,

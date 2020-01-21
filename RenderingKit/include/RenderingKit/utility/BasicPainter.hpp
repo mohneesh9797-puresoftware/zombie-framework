@@ -76,6 +76,8 @@ namespace RenderingKit
         public:
             typedef typename BasicPainter<PosType, ColourType>::VertexType VertexType;
 
+            // FIXME: it's way too easy to supply a wrong data type (e.g. Float4 instead of Byte4 for colour)
+            //        and break everything
             void DrawCuboidWireframe(const PosType& pos, const PosType& size, const ColourType& colour);
             void DrawFilledCuboid(const PosType& pos, const PosType& size, const ColourType& colour);
             void DrawFilledRectangle(const PosType& pos, const PosType& size, const ColourType& colour);

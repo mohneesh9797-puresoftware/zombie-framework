@@ -133,12 +133,6 @@ namespace RenderingKit
             virtual GLuint GetVBO() = 0;
     };
 
-    class IGLCamera : public ICamera
-    {
-        public:
-            virtual void GLSetUpMatrices(const Int2& viewport, glm::mat4x4*& projection_out, glm::mat4x4*& modelView_out) = 0;
-    };
-
 #ifndef RENDERING_KIT_USING_OPENGL_ES
     class IGLDeferredShadingManager : public IDeferredShadingManager
     {
@@ -303,8 +297,6 @@ namespace RenderingKit
             IWindowManagerBackend*      GetWindowManagerBackend() { return wm.get(); }
     };
 
-    shared_ptr<ICamera>             p_CreateCamera(zfw::ErrorBuffer_t* eb, RenderingKit* rk,
-            IRenderingManagerBackend* rm, const char* name, CoordinateSystem coordSystem);
     shared_ptr<IGLFontFace>         p_CreateFontFace(zfw::ErrorBuffer_t* eb, RenderingKit* rk,
             IRenderingManagerBackend* rm, const char* name);
     shared_ptr<IGLGeomBuffer>       p_CreateGeomBuffer(zfw::ErrorBuffer_t* eb, RenderingKit* rk,
