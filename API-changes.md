@@ -1,5 +1,6 @@
 2020.01:
 
+	- framework: by default add working directory as a read-only filesystem (kSysNoDefaultFileSystem to override)
 	- RenderingKit: more straightforward initialization
 
 2019.01

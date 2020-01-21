@@ -65,6 +65,7 @@ namespace zfw
                 return &pm->pixelData[0];
             }
 
+            // API TODO: take references instead of pointers
             template <class Pixmap_t>
             static bool LoadFromFile(IEngine* sys, Pixmap_t* pm, const char* fileName)
             {
