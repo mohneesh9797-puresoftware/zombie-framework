@@ -1,74 +1,10 @@
 
-#include "RenderingKitImpl.hpp"
+#include <RenderingKit/utility/Camera.hpp>
 
-#include <littl/String.hpp>
+#include <framework/utility/essentials.hpp>
 
 namespace RenderingKit
 {
-    enum RKProjectionType_t
-    {
-        kProjectionInvalid,
-        kProjectionOrtho,
-        kProjectionOrthoFakeFov,
-        kProjectionOrthoScreenSpace,
-        kProjectionPerspective
-    };
-
-    class GLCamera : public IGLCamera
-    {
-        RenderingKit* rk;
-        IRenderingManagerBackend* rm;
-        String name;
-        CoordinateSystem coordSystem;
-
-        RKProjectionType_t proj;
-        Float3 eye, center, up;
-        float vfov;
-        float left, right, top, bottom;
-        float nearZ, farZ;
-
-        glm::mat4 projection, modelView;
-
-        void BuildModelView();
-
-        public:
-            GLCamera(zfw::ErrorBuffer_t* eb, RenderingKit* rk, IRenderingManagerBackend* rm, const char* name,
-                     CoordinateSystem coordSystem);
-            
-            virtual const char* GetName() override { return name.c_str(); }
-
-            virtual float CameraGetDistance() override;
-            virtual void CameraMove(const Float3& vec) override;
-            virtual void CameraRotateXY(float alpha, bool absolute) override;
-            virtual void CameraRotateZ(float alpha, bool absolute) override;
-            virtual void CameraZoom(float amount, bool absolute) override;
-
-            virtual Float3 GetCenter() override { return center; }
-            virtual Float3 GetEye() override { return eye; }
-            virtual Float3 GetUp() override { return up; }
-
-            virtual void GetModelViewMatrix(glm::mat4* output) override
-            {
-                *output = modelView;
-            }
-
-            virtual void GetProjectionModelViewMatrix(glm::mat4* output) override
-            {
-                *output = (projection * modelView);
-            }
-
-            virtual void SetClippingDist(float nearClip, float farClip) override;
-            virtual void SetOrtho(float left, float right, float top, float bottom) override;
-            virtual void SetOrthoFakeFOV() override { proj = kProjectionOrthoFakeFov; }
-            virtual void SetOrthoScreenSpace() override { proj = kProjectionOrthoScreenSpace; }
-            virtual void SetPerspective() override { proj = kProjectionPerspective; }
-            virtual void SetVFov(float vfov_radians) override { this->vfov = vfov_radians; }
-            virtual void SetView(const Float3& eye, const Float3& center, const Float3& up) override;
-            virtual void SetView2(const Float3& center, const float eyeDistance, float yaw, float pitch) override;
-
-            virtual void GLSetUpMatrices(const Int2& viewport, glm::mat4x4*& projection_out, glm::mat4x4*& modelView_out) override;
-    };
-
     static void s_EyeAndUpFromAngles( const Float3& center, float eyeDistance, float yaw, float pitch, Float3& eye_out, Float3& up )
     {
         using zfw::f_pi;
@@ -104,26 +40,16 @@ namespace RenderingKit
         angle2 = std::atan2( cam.z, glm::length( glm::vec2( cam ) ) );
     }
 
-    shared_ptr<ICamera> p_CreateCamera(zfw::ErrorBuffer_t* eb, RenderingKit* rk, IRenderingManagerBackend* rm,
-                                       const char* name, CoordinateSystem coordSystem)
-    {
-        return std::make_shared<GLCamera>(eb, rk, rm, name, coordSystem);
-    }
-
-    GLCamera::GLCamera(zfw::ErrorBuffer_t* eb, RenderingKit* rk, IRenderingManagerBackend* rm, const char* name,
-                       CoordinateSystem coordSystem)
+    Camera::Camera(const char* name, CoordinateSystem coordSystem)
             : name(name), coordSystem(coordSystem)
     {
-        this->rk = rk;
-        this->rm = rm;
-
         proj = kProjectionInvalid;
         nearZ = 1.0f;
         farZ = 1000.0f;
         vfov = 45.0f * zfw::f_pi / 180.0f;
     }
 
-    void GLCamera::BuildModelView()
+    void Camera::BuildModelView()
     {
         switch (coordSystem)
         {
@@ -139,19 +65,19 @@ namespace RenderingKit
         }
     }
 
-    float GLCamera::CameraGetDistance()
+    float Camera::CameraGetDistance()
     {
         return glm::length( eye - center );
     }
 
-    void GLCamera::CameraMove( const glm::vec3& vec )
+    void Camera::CameraMove( const glm::vec3& vec )
     {
         eye += vec;
         center += vec;
         BuildModelView();
     }
 
-    void GLCamera::CameraRotateXY( float alpha, bool absolute )
+    void Camera::CameraRotateXY( float alpha, bool absolute )
     {
         float dist, angle, angle2;
 
@@ -166,7 +92,7 @@ namespace RenderingKit
         BuildModelView();
     }
 
-    void GLCamera::CameraRotateZ(float alpha, bool absolute)
+    void Camera::CameraRotateZ(float alpha, bool absolute)
     {
         float dist, angle, angle2;
 
@@ -181,7 +107,7 @@ namespace RenderingKit
         BuildModelView();
     }
 
-    void GLCamera::CameraZoom(float amount, bool absolute)
+    void Camera::CameraZoom(float amount, bool absolute)
     {
         float dist, angle, angle2;
 
@@ -196,12 +122,12 @@ namespace RenderingKit
         BuildModelView();
     }
 
-    void GLCamera::GLSetUpMatrices(const Int2& viewportSize, glm::mat4x4*& projection_out, glm::mat4x4*& modelView_out)
+    void Camera::BuildProjectionModelViewMatrices(const Int2& viewportSize, glm::mat4x4* projection_out, glm::mat4x4* modelView_out)
     {
         switch (proj)
         {
             case kProjectionInvalid:
-                ZFW_DBGASSERT(proj != kProjectionInvalid)
+                ZFW_DBGASSERT(this->proj != kProjectionInvalid)
                 break;
 
             case kProjectionOrtho:
@@ -238,17 +164,17 @@ namespace RenderingKit
             }
         }
 
-        projection_out = &projection;
-        modelView_out = &modelView;
+        *projection_out = projection;
+        *modelView_out = modelView;
     }
 
-    void GLCamera::SetClippingDist(float nearClip, float farClip)
+    void Camera::SetClippingDist(float nearClip, float farClip)
     {
         this->nearZ = nearClip;
         this->farZ = farClip;
     }
 
-    void GLCamera::SetOrtho(float left, float right, float top, float bottom)
+    void Camera::SetOrtho(float left, float right, float top, float bottom)
     {
         proj = kProjectionOrtho;
         this->left = left;
@@ -257,7 +183,7 @@ namespace RenderingKit
         this->bottom = bottom;
     }
 
-    void GLCamera::SetView(const Float3& eye, const Float3& center, const Float3& up)
+    void Camera::SetView(const Float3& eye, const Float3& center, const Float3& up)
     {
         this->eye = eye;
         this->center = center;
@@ -265,7 +191,7 @@ namespace RenderingKit
         BuildModelView();
     }
 
-    void GLCamera::SetView2(const Float3& center, const float eyeDistance, float yaw, float pitch)
+    void Camera::SetView2(const Float3& center, const float eyeDistance, float yaw, float pitch)
     {
         this->center = center;
         this->up = Float3(0.0f, -1.0f, 0.0f);
