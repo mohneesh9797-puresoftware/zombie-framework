@@ -21,58 +21,58 @@
 #include <crtdbg.h>
 #endif
 
-namespace Client
-{
-    using std::make_shared;
-    using std::make_unique;
-    using std::unique_ptr;
-    using zfw::ErrorBuffer_t;
-    using zfw::IEngine;
+namespace Client {
+using std::make_shared;
+using std::make_unique;
+using std::unique_ptr;
+using zfw::ErrorBuffer_t;
+using zfw::IEngine;
 
-    static ErrorBuffer_t* g_eb;
+static ErrorBuffer_t* g_eb;
 
-    static unique_ptr<IEngine> SysInit(int argc, char** argv)
-    {
-        auto engine = zfw::CreateEngine2(g_eb, 0, argc, argv);
+static unique_ptr<IEngine> SysInit(int argc, char** argv) {
+    auto engine = zfw::CreateEngine2(g_eb, 0, argc, argv);
 
-        if (!engine->Startup()) {
-            engine->DisplayError(g_eb, true);
-            return {};
-        }
-
-        return engine;
+    if (!engine->Startup()) {
+        engine->DisplayError(g_eb, true);
+        return {};
     }
 
-    static void GameMain(int argc, char** argv)
-    {
-        auto engine = SysInit(argc, argv);
+    return engine;
+}
 
-        if (!engine) {
-            return;
-        }
+static void GameMain(int argc, char** argv) {
+    auto engine = SysInit(argc, argv);
 
-        auto eventQueue = zfw::MessageQueue::Create();
-        auto viewSystem = make_unique<RenderingManager>();
-        viewSystem->Startup(engine.get(), eventQueue);
-
-        PubSub::Broker broker;
-
-        engine->ChangeScene(make_shared<TitleScene>(*engine, *eventQueue, broker, *viewSystem));
-        engine->RunMainLoop();
+    if (!engine) {
+        return;
     }
 
-    ClientEntryPoint
-    {
+    auto eventQueue = zfw::MessageQueue::Create();
+    auto viewSystem = make_unique<RenderingManager>();
+    
+    if (!viewSystem->Startup(engine.get(), eventQueue)) {
+        engine->DisplayError(g_eb, true);
+        return;
+    }
+
+    PubSub::Broker broker;
+
+    engine->ChangeScene(make_shared<TitleScene>(*engine, *eventQueue, broker, *viewSystem));
+    engine->RunMainLoop();
+}
+
+ClientEntryPoint {
 #if defined(_DEBUG) && defined(_MSC_VER)
-        _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
-        //_CrtSetBreakAlloc();
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
+    //_CrtSetBreakAlloc();
 #endif
 
-        zfw::ErrorBuffer::Create(g_eb);
+    zfw::ErrorBuffer::Create(g_eb);
 
-        GameMain(argc, argv);
+    GameMain(argc, argv);
 
-        zfw::ErrorBuffer::Release(g_eb);
-        return 0;
-    }
+    zfw::ErrorBuffer::Release(g_eb);
+    return 0;
+}
 }

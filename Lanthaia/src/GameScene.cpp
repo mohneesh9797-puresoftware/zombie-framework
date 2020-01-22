@@ -1,8 +1,7 @@
 #include "GameScene.hpp"
 #include "RenderingManager.hpp"
 
-namespace Client
-{
+namespace Client {
 
 void GameScene::DrawScene() {
     r.DrawWorld();

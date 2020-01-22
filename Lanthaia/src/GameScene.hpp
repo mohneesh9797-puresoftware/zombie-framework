@@ -3,14 +3,14 @@
 
 #include <framework/scene.hpp>
 
-namespace Client
-{
+namespace Client {
 
 class RenderingManager;
 
 class GameScene : public zfw::IScene {
 public:
-    GameScene(RenderingManager& r) : r(r) {}
+    GameScene(RenderingManager& r)
+        : r(r) {}
 
     bool Init() override { return true; }
     void Shutdown() override {}
