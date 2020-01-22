@@ -2,6 +2,10 @@
 
 ![screenshot](https://raw.githubusercontent.com/minexew/zombie-framework/master/screenshots/screenshot-20120627-224725.png)
 
+## Dependencies
+
+On Fedora, install `mesa-libGLU-devel SDL2-devel`
+
 ## Building with Emscripten
 `python disttool-web.py <path-to-project> <emscripten-path>`
 
