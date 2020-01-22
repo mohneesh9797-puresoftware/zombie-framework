@@ -5,11 +5,11 @@
 
 namespace Client {
 
-class RenderingManager;
+class RenderingSystem;
 
 class GameScene : public zfw::IScene {
 public:
-    GameScene(RenderingManager& r)
+    GameScene(RenderingSystem& r)
         : r(r) {}
 
     bool Init() override { return true; }
@@ -21,7 +21,7 @@ public:
     void DrawScene() override;
 
 private:
-    RenderingManager& r;
+    RenderingSystem& r;
 };
 
 }

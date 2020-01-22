@@ -1,5 +1,5 @@
 #include "GameScene.hpp"
-#include "RenderingManager.hpp"
+#include "system/RenderingSystem.hpp"
 
 namespace Client {
 

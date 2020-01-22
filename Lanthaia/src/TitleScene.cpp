@@ -11,7 +11,7 @@ namespace Client {
 using std::make_shared;
 using std::make_unique;
 
-TitleScene::TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker, RenderingManager& r)
+TitleScene::TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker, RenderingSystem& r)
     : engine(engine)
     , eventQueue(eventQueue)
     , sub(broker, myPipe)

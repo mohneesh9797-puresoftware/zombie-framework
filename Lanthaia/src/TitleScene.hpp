@@ -7,11 +7,12 @@
 
 namespace Client {
 
-class RenderingManager;
+class RenderingSystem;
 
 class TitleScene : public zfw::IScene {
 public:
-    TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker, RenderingManager& r);
+    // API TODO: conside querying RenderingSystem from engine instead of passing around
+    TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker, RenderingSystem& r);
 
     bool Init() override;
     void Shutdown() override {}
@@ -28,7 +29,7 @@ private:
     PubSub::Pipe myPipe;
     PubSub::Subscription sub;
 
-    RenderingManager& r;
+    RenderingSystem& r;
 };
 
 }

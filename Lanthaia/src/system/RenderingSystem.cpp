@@ -1,4 +1,4 @@
-#include "RenderingManager.hpp"
+#include "RenderingSystem.hpp"
 
 #include <framework/colorconstants.hpp>
 #include <framework/engine.hpp>
@@ -13,7 +13,7 @@ using std::make_unique;
 
 namespace Client {
 
-bool RenderingManager::Startup(zfw::IEngine* sys, zfw::MessageQueue* eventQueue) {
+bool RenderingSystem::Startup(zfw::IEngine* sys, zfw::MessageQueue* eventQueue) {
     auto imh = sys->GetModuleHandler(true);
 
     this->rk.reset(RenderingKit::TryCreateRenderingKit(imh));
@@ -42,7 +42,7 @@ bool RenderingManager::Startup(zfw::IEngine* sys, zfw::MessageQueue* eventQueue)
     return true;
 }
 
-void RenderingManager::DrawWorld() {
+void RenderingSystem::DrawWorld() {
     rm->Clear(zfw::COLOUR_WHITE);
 
     // TODO API: it's too easy to forget something

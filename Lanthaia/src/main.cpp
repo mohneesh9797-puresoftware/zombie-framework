@@ -9,7 +9,7 @@
  * Scripting: ?
  */
 
-#include "RenderingManager.hpp"
+#include "system/RenderingSystem.hpp"
 #include "TitleScene.hpp"
 
 #include <framework/app.hpp>
@@ -49,7 +49,7 @@ static void GameMain(int argc, char** argv) {
     }
 
     auto eventQueue = zfw::MessageQueue::Create();
-    auto viewSystem = make_unique<RenderingManager>();
+    auto viewSystem = make_unique<RenderingSystem>();
     
     if (!viewSystem->Startup(engine.get(), eventQueue)) {
         engine->DisplayError(g_eb, true);
