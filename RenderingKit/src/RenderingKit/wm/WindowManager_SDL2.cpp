@@ -102,7 +102,7 @@ namespace RenderingKit
     {
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_NOPARACHUTE) != 0)
             return ErrorBuffer::SetError2(eb, EX_BACKEND_ERR, 2,
-                    "desc", "Failed to initialize SDL.",
+                    "desc", sprintf_255("Failed to initialize SDL: %s", SDL_GetError()),
                     "function", li_functionName),
                     false;
 
