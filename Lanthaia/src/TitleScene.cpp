@@ -42,13 +42,14 @@ void TitleScene::OnTicks(int ticks) {
         }
         else if (auto update = msg->cast<WorldSocketHandover>()) {
             engine.Printf(zfw::kLogInfo, "Entering world");
-            auto gameScene = make_shared<GameScene>(r);
+            auto gameScene = make_shared<GameScene>(sub.getBroker(), engine, eventQueue, r, move(update->socket));
             engine.ChangeScene(gameScene);
         }
     }
 
     while (zfw::MessageHeader* msg = eventQueue.Retrieve(li::Timeout(0))) {
         switch (msg->type) {
+        // TODO API: make this opt-out default once refactored to deliver through PubSub
         case zfw::EVENT_WINDOW_CLOSE:
             engine.StopMainLoop();
             break;

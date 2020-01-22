@@ -5,17 +5,18 @@
  * ECS: entt
  * Game UI: imgui?
  * I/O: littl TcpSocket for now
- * Rendering: RenderingKit, migrate to bgfx-based solution?
+ * Rendering: RenderingKit, eventually bgfx as core part of framework
  * Scripting: ?
  */
 
-#include "system/RenderingSystem.hpp"
+#include <Gfx/RenderingSystem.hpp>
 #include "TitleScene.hpp"
 
 #include <framework/app.hpp>
 #include <framework/engine.hpp>
 #include <framework/messagequeue.hpp>
 #include <framework/utility/errorbuffer.hpp>
+#include <Res/ResourceHeightMap.hpp>
 
 #if defined(_DEBUG) && defined(_MSC_VER)
 #include <crtdbg.h>
@@ -30,6 +31,8 @@ using zfw::IEngine;
 
 static ErrorBuffer_t* g_eb;
 
+zfw::IResourceManager2* globalResMgr;
+
 static unique_ptr<IEngine> SysInit(int argc, char** argv) {
     auto engine = zfw::CreateEngine2(g_eb, 0, argc, argv);
 
@@ -42,6 +45,8 @@ static unique_ptr<IEngine> SysInit(int argc, char** argv) {
 }
 
 static void GameMain(int argc, char** argv) {
+    PubSub::Broker broker;
+
     auto engine = SysInit(argc, argv);
 
     if (!engine) {
@@ -49,14 +54,16 @@ static void GameMain(int argc, char** argv) {
     }
 
     auto eventQueue = zfw::MessageQueue::Create();
-    auto viewSystem = make_unique<RenderingSystem>();
-    
+
+    globalResMgr = engine->CreateResourceManager2();
+    globalResMgr->RegisterResourceClass<Obs::Res::ResourceHeightMap>();
+
+    auto viewSystem = make_unique<RenderingSystem>(*globalResMgr);
+
     if (!viewSystem->Startup(engine.get(), eventQueue)) {
         engine->DisplayError(g_eb, true);
         return;
     }
-
-    PubSub::Broker broker;
 
     engine->ChangeScene(make_shared<TitleScene>(*engine, *eventQueue, broker, *viewSystem));
     engine->RunMainLoop();

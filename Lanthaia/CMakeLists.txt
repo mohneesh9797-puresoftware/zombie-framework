@@ -10,18 +10,29 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 set(sources
-        src/main.cpp
+        src/data/Map.cpp
+        src/data/Map.hpp
         src/GameScene.cpp
         src/GameScene.hpp
+        src/main.cpp
         src/TitleScene.cpp
         src/TitleScene.hpp
+        src/rendering/Ms3dModel.cpp
+        src/rendering/Ms3dModel.hpp
+        src/rendering/Ms3dModelLayer.cpp
+        src/rendering/Ms3dModelLayer.hpp
+        src/rendering/TerrainRenderLayer.cpp
+        src/rendering/TerrainRenderLayer.hpp
         src/system/LoginSystem.cpp
         src/system/LoginSystem.hpp
-        src/system/RenderingSystem.cpp
-        src/system/RenderingSystem.hpp
+        src/WorldSession.cpp
+        src/WorldSession.hpp
+
+        Common/Messages.hpp
 )
 
 add_subdirectory(../framework ${CMAKE_BINARY_DIR}/build-framework)
+add_subdirectory(../GfxObsession ${CMAKE_BINARY_DIR}/build-GfxObsession)
 add_subdirectory(../RenderingKit ${CMAKE_BINARY_DIR}/build-RenderingKit)
 
 add_executable(${PROJECT_NAME} ${sources})
@@ -29,10 +40,11 @@ add_executable(${PROJECT_NAME} ${sources})
 add_dependencies(${PROJECT_NAME} zombie_framework)
 target_link_libraries(${PROJECT_NAME} zombie_framework)
 
-add_dependencies(${PROJECT_NAME} RenderingKit)
-target_link_libraries(${PROJECT_NAME} RenderingKit)
+add_dependencies(${PROJECT_NAME} GfxObsession RenderingKit)
+target_link_libraries(${PROJECT_NAME} GfxObsession RenderingKit)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
+    Common
     src
 )
 

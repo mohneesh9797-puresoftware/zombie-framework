@@ -3,11 +3,13 @@
 
 #include <framework/scene.hpp>
 
+#include <Gfx/Fwd.hpp>
+
 #include <PubSub.hpp>
 
 namespace Client {
 
-class RenderingSystem;
+using Obs::Gfx::RenderingSystem;
 
 class TitleScene : public zfw::IScene {
 public:
