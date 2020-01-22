@@ -1,6 +1,7 @@
 #ifndef LANTHAIA_LOGINSYSTEM_HPP
 #define LANTHAIA_LOGINSYSTEM_HPP
 
+#include <framework/base.hpp>
 #include <framework/system.hpp>
 #include <PubSub.hpp>
 
@@ -64,13 +65,14 @@ struct LoginRequest {
 // subscribes LoginRequest
 class LoginSystem : public zfw::ISystem {
 public:
-    explicit LoginSystem(PubSub::Broker& broker);
+    LoginSystem(zfw::IEngine& engine, PubSub::Broker& broker);
 
     void OnTicks(int ticks) override;
 
 private:
     LoginSession session;
 
+    zfw::IEngine& engine;
     PubSub::Pipe myPipe;
     PubSub::Subscription sub;
 };

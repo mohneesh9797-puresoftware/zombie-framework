@@ -1,5 +1,7 @@
 #include "LoginSystem.hpp"
 
+#include <framework/engine.hpp>
+
 using std::make_optional;
 using std::nullopt;
 using std::optional;
@@ -163,8 +165,8 @@ optional<LoginSession::StateUpdate> LoginSession::Update() {
     return nullopt;
 }
 
-LoginSystem::LoginSystem(PubSub::Broker& broker)
-        : sub(broker, myPipe) {
+LoginSystem::LoginSystem(zfw::IEngine& engine, PubSub::Broker& broker)
+        : engine(engine), sub(broker, myPipe) {
     sub.add<LoginRequest>();
 }
 
@@ -174,7 +176,10 @@ void LoginSystem::OnTicks(int ticks) {
     if (stateUpdate.has_value()) {
         sub.getBroker().publish<LoginSession::StateUpdate>(LoginSession::StateUpdate {*stateUpdate});
 
-        if (stateUpdate->state == LoginSession::State::readyToLogin) {
+        if (stateUpdate->state == LoginSession::State::error) {
+            engine.Printf(zfw::kLogError, "LoginSession error: %s", stateUpdate->message.c_str());
+        }
+        else if (stateUpdate->state == LoginSession::State::readyToLogin) {
             sub.getBroker().publish<LoginServerInfo>(LoginServerInfo { session.GetServerInfo() });
         }
         else if (stateUpdate->state == LoginSession::State::enteringWorld) {
@@ -192,7 +197,6 @@ void LoginSystem::OnTicks(int ticks) {
 
             std::tuple<const char*, uint16_t> loginEndpoint{"127.0.0.1", 24897};
 //            std::tuple<const char*, uint16_t> loginEndpoint{"google.com", 80};
-//            std::tuple<const char*, uint16_t> loginEndpoint{"tsim.viewdns.net", 1000};
             session.ConnectTo(loginEndpoint);
             break;
         }
