@@ -1,6 +1,6 @@
-#include "system/LoginSystem.hpp"
-#include "GameScene.hpp"
 #include "TitleScene.hpp"
+#include "GameScene.hpp"
+#include "system/LoginSystem.hpp"
 
 #include <framework/engine.hpp>
 #include <framework/event.hpp>
@@ -12,7 +12,10 @@ using std::make_shared;
 using std::make_unique;
 
 TitleScene::TitleScene(zfw::IEngine& engine, zfw::MessageQueue& eventQueue, PubSub::Broker& broker, RenderingManager& r)
-        : engine(engine), eventQueue(eventQueue), sub(broker, myPipe), r(r) {
+    : engine(engine)
+    , eventQueue(eventQueue)
+    , sub(broker, myPipe)
+    , r(r) {
     sub.add<LoginServerInfo>();
     sub.add<LoginSession::StateUpdate>();
     sub.add<WorldSocketHandover>();
@@ -46,9 +49,9 @@ void TitleScene::OnTicks(int ticks) {
 
     while (zfw::MessageHeader* msg = eventQueue.Retrieve(li::Timeout(0))) {
         switch (msg->type) {
-            case zfw::EVENT_WINDOW_CLOSE:
-                engine.StopMainLoop();
-                break;
+        case zfw::EVENT_WINDOW_CLOSE:
+            engine.StopMainLoop();
+            break;
         }
 
         msg->Release();

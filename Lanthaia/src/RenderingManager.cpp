@@ -50,10 +50,10 @@ void RenderingManager::DrawWorld() {
     cam.SetClippingDist(1.0f, 1000.0f);
     cam.SetVFov(3.14f * 0.25f);
     cam.SetPerspective();
-    cam.SetViewWithCenterDistanceYawPitch({}, 20.0f, 0.0f, 3.14f*0.25f);
+    cam.SetViewWithCenterDistanceYawPitch({}, 20.0f, 0.0f, 3.14f * 0.25f);
     rm->SetCamera(&cam);
 
-    bp3d.DrawGridAround({}, {1.0f, 1.0f, 0.0f}, {20, 20}, zfw::RGBA_BLACK);
+    bp3d.DrawGridAround({}, { 1.0f, 1.0f, 0.0f }, { 20, 20 }, zfw::RGBA_BLACK);
 }
 
 }
