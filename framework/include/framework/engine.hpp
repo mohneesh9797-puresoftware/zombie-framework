@@ -23,7 +23,9 @@ namespace zfw
 		/** Currently this affects the way error messages are displayed */
         kSysNonInteractive = 2,
 
+#if ZOMBIE_API_VERSION >= 202001
         kSysNoDefaultFileSystem = 3,
+#endif
     };
 
     class IEngine
@@ -94,6 +96,7 @@ namespace zfw
             virtual void ParseArgs1(int argc, char* argv[]) = 0;        // will be reworked
 
             // I/O Utility
+            // API TODO: return owning pointers!
             virtual bool CreateDirectoryRecursive(const char* path) = 0;
             virtual InputStream* OpenInput( const char* path ) = 0;
             virtual OutputStream* OpenOutput( const char* path ) = 0;

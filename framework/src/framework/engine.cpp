@@ -394,9 +394,11 @@ namespace zfw
         if (!(flags & kSysNoInitFileSystem)) {
             fsUnion.reset(p_CreateFSUnion(s_eb));
 
+#if ZOMBIE_API_VERSION >= 202001
             if (!(flags & kSysNoDefaultFileSystem)) {
                 this->AddFileSystem(p_CreateStdFileSystem(eb, "", kFSAccessStat | kFSAccessRead), 0);
             }
+#endif
         }
 
         return true;
