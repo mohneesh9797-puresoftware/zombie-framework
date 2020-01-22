@@ -1,12 +1,12 @@
-#ifndef LANTHAIA_RENDERINGMANAGER_HPP
-#define LANTHAIA_RENDERINGMANAGER_HPP
+#ifndef LANTHAIA_RENDERINGSYSTEM_HPP
+#define LANTHAIA_RENDERINGSYSTEM_HPP
 
 #include <RenderingKit/RenderingKit.hpp>
 #include <RenderingKit/utility/BasicPainter.hpp>
 
 namespace Client {
 
-class RenderingManager {
+class RenderingSystem {
 public:
     bool Startup(zfw::IEngine* sys, zfw::MessageQueue* eventQueue);
 

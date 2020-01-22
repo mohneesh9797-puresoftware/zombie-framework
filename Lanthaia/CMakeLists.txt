@@ -11,14 +11,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 set(sources
         src/main.cpp
-        src/RenderingManager.cpp
-        src/RenderingManager.hpp
         src/GameScene.cpp
         src/GameScene.hpp
         src/TitleScene.cpp
         src/TitleScene.hpp
         src/system/LoginSystem.cpp
         src/system/LoginSystem.hpp
+        src/system/RenderingSystem.cpp
+        src/system/RenderingSystem.hpp
 )
 
 add_subdirectory(../framework ${CMAKE_BINARY_DIR}/build-framework)
