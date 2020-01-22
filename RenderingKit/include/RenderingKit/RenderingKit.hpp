@@ -504,6 +504,7 @@ namespace RenderingKit
             virtual shared_ptr<ITexture>       CreateTexture(const char* name) = 0;
             virtual shared_ptr<ITextureAtlas>  CreateTextureAtlas2D(const char* name, Int2 size) = 0;
 
+            // TODO API: take attributes as std::span
             /**
              *
              * @param program
