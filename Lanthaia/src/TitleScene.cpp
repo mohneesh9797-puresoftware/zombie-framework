@@ -22,7 +22,7 @@ bool TitleScene::Init() {
     // TODO: init GUI
     // alt TODO: use stateless gui (from Container)
 
-    engine.AddSystem(make_unique<LoginSystem>(sub.getBroker()));
+    engine.AddSystem(make_unique<LoginSystem>(engine, sub.getBroker()));
     return true;
 }
 
