@@ -3,9 +3,20 @@
 #include "world.hpp"
 
 #include <framework/broadcasthandler.hpp>
+#include <framework/entityworld2.hpp>
+#include <framework/components/model3d.hpp>
+#include <framework/components/position.hpp>
 
 namespace ntile
 {
+    using glm::ivec3;
+    using glm::vec3;
+
+    class LegacySerializedEntityWorldLoader {
+    public:
+        bool Load(IEngine& engine, InputStream* input, IEntityWorld2* world);
+    };
+
     int GameScreen::LoadMap(const char* map)
     {
         g_sys->Printf(kLogInfo, "GameScreen: Load map %s", map);
@@ -109,20 +120,15 @@ namespace ntile
         }
         
         g_sys->Printf(kLogInfo, "GameScreen: World loading...");
-        NOT_IMPLEMENTED();
-        // if (!world->Unserialize(entities.get(), 0))
-        // {
-        //     if (g_eb->errorCode == EX_OBJECT_UNDEFINED)
-        //         ErrorBuffer::SetError(g_eb, EX_SERIALIZATION_ERR,
-        //             "desc", sprintf_255("Failed to load map '%s'. The map is corrupted or was created by an incompatible version of the game.", map),
-        //             "function", li_functionName,
-        //             nullptr);
 
-        //     g_sys->DisplayError(g_eb, false);
-        //     return EX_ASSET_CORRUPTED;
-        // }
-        // else
-        //     g_sys->Printf(kLogInfo, "GameScreen: World loading successful.");
+        LegacySerializedEntityWorldLoader ld;
+
+        if (!ld.Load(*g_sys, entities.get(), g_ew.get())) {
+            g_sys->PrintError(g_sys->GetEssentials()->GetErrorBuffer(), kLogError);
+            return EX_ASSET_CORRUPTED;
+        }
+
+        g_sys->Printf(kLogInfo, "GameScreen: World loading successful.");
 
         /*auto water = std::make_shared<entities::water_body>();
         water->SetPos(Float3(256.0f, 256.0f, 16.0f));
@@ -140,5 +146,61 @@ namespace ntile
         */
 
         return 0;
+    }
+
+    bool LegacySerializedEntityWorldLoader::Load(IEngine& engine, InputStream* input, IEntityWorld2* world) {
+        uint8_t v = 0;
+        input->readLE<uint8_t>(&v);
+        zombie_assert(v == 0x10);
+
+        for (;;)
+        {
+            li::String entName = input->readString();
+
+            if (entName.isEmpty())
+                break;
+
+            int32_t entID;
+            input->readLE<int32_t>(&entID);
+
+            engine.Printf(kLogInfo, "World: Unserializing entity [%3i] %s", entID, entName.c_str());
+
+            if (entName.equals("door_base")) {
+                vec3 pos;
+                input->read(&pos, sizeof(pos));
+
+                auto entity = world->CreateEntity();
+                entity.SetComponent(Position{ivec3(pos / vec3{ 16.0f, 16.0f, 16.0f })});
+                entity.SetComponent(Model3D{"ntile/models/door"});
+            }
+            else if (entName.equals("prop_tree")) {
+                vec3 pos;
+                input->read(&pos, sizeof(pos));
+
+                auto entity = world->CreateEntity();
+                entity.SetComponent(Position{ivec3(pos / vec3{ 16.0f, 16.0f, 16.0f })});
+                entity.SetComponent(Model3D{"ntile/models/prop_tree"});
+            }
+            else if (entName.equals("shiroi_house")) {
+                vec3 pos;
+                input->read(&pos, sizeof(pos));
+
+                auto entity = world->CreateEntity();
+                entity.SetComponent(Position{ivec3(pos / vec3{ 16.0f, 16.0f, 16.0f })});
+                entity.SetComponent(Model3D{"ntile/models/shiroi_house"});
+            }
+            else {
+                ErrorBuffer::SetError3(EX_SERIALIZATION_ERR, 2,
+                                       "desc", sprintf_255("Unknown entity class '%s'.", entName.c_str()),
+                                       "function", li_functionName
+                );
+                return false;
+            }
+
+            uint8_t marker;
+            zombie_assert(input->readByte(&marker) && marker == 0xDD);
+        }
+
+        return true;
     }
 }

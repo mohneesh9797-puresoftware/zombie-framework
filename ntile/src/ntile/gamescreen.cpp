@@ -167,11 +167,7 @@ namespace ntile
 
 //        ieh->Register("prop_base",          &CreateInstance<entities::prop_base>);
 //        ieh->Register("prop_treasurechest", &CreateInstance<entities::prop_treasurechest>);
-        //Entity::Register("prop_tree",           &entities::prop_tree::Create);
         //ieh->Register("water_body",         &CreateInstance<entities::water_body>);
-        ieh->RegisterExternal("ntile/entities/door_base", 0);
-        ieh->RegisterExternal("ntile/entities/prop_tree", 0);
-        ieh->RegisterExternal("ntile/entities/shiroi_house", 0);
 
         //if (g_eb->errorCode != 0)
         //    Sys::DisplayError(g_eb, false);
@@ -1120,7 +1116,7 @@ namespace ntile
                     "function", li_functionName
                     );
             g_sys->DisplayError(g_eb, false);
-            return false;     // FIXME: what do here
+//            return false;     // FIXME: what do here
         }
 
         g_res->LeaveResourceSection();

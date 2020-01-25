@@ -518,6 +518,9 @@ namespace ntile
         //if (!anyRunningAnimations && !forceSingleRefresh)
         //    return;
 
+        if (!skeleton)
+            return;
+
         ResetRotation(skeleton.get(), true);
 
         iterate2 (i, activeAnims)
