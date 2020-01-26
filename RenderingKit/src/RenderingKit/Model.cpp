@@ -145,6 +145,7 @@ namespace RenderingKit
     }
 
     void GLModel::Draw(const glm::mat4x4& transform) {
+        zombie_assert(state == REALIZED);
         zombie_assert(this->model);
 
         auto rm = rk->GetRenderingManagerBackend();
@@ -312,6 +313,7 @@ namespace RenderingKit
 
         // Initialize materials
         for (auto& material : model->materials) {
+            // FIXME FIXME FIXME
             auto rkMaterial = rk->GetRenderingManagerBackend()->GetSharedResourceManager2()->GetResource<IGLMaterial>("shader=path=ntile/shaders/world", 0);
             zombie_assert(rkMaterial);
             this->materials.push_back(rkMaterial);
