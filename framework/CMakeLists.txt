@@ -56,6 +56,7 @@ set(sources
         include/framework/utility/algebrahelpers.hpp
         include/framework/utility/errorbuffer.hpp
         include/framework/utility/essentials.hpp
+        include/framework/utility/keytracker.hpp
         include/framework/utility/params.hpp
         include/framework/utility/pixmap.hpp
         include/framework/utility/util.hpp
@@ -96,6 +97,7 @@ set(sources
         src/framework/timer.cpp
         src/framework/utility/algebrahelpers.cpp
         src/framework/utility/essentials.cpp
+        src/framework/utility/keytracker.cpp
         src/framework/utility/params.cpp
         src/framework/utility/util.cpp
         src/framework/utility/vkey.cpp
