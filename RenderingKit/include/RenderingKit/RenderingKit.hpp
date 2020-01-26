@@ -385,6 +385,7 @@ namespace RenderingKit
             virtual void SetVBMinSize(size_t size) = 0;
             virtual void SetVBMaxSize(size_t size) = 0;
 
+            // TODO API: allow AllocVertices+UpdateVertices in one shot
             virtual unique_ptr<IGeomChunk> AllocVertices(const VertexFormatInfo& vf, size_t count, int flags) = 0;
 
             // Pending deprecation
@@ -534,7 +535,7 @@ namespace RenderingKit
             virtual void PopRenderBuffer() = 0;
             virtual void PushRenderBuffer(IRenderBuffer* rb) = 0;
             virtual void SetCamera(ICamera* camera) = 0;
-            virtual void SetRenderState(RKRenderStateEnum_t state, int value) = 0;
+            virtual void SetRenderState(RKRenderStateEnum_t state, int value) = 0; // TODO API: refactor this wack
             virtual void SetProjection(const glm::mat4x4& projection) = 0;
             virtual void SetProjectionOrthoScreenSpace(float nearZ, float farZ) = 0;
 
