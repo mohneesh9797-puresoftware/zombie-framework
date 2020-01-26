@@ -77,6 +77,7 @@ namespace zfw
 
             // Logging functions
             // TODO: this split is a long-standing mess. Just control the printing based on logType.
+            // TODO API: make this available even without a reference to IEngine (either global or a reduced interface)
             virtual int Printf(LogType_t logType, const char* format, ...) = 0;
             virtual int Printfv(LogType_t logType, const char* format, va_list args) = 0;
             virtual void Log(LogType_t logType, const char* format, ...) = 0;

@@ -52,6 +52,15 @@ namespace zfw
             virtual State_t GetState() const = 0;
             virtual bool StateTransitionTo(State_t targetState, IResourceManager2* resMgr) = 0;
 
+            // To use Default* functions, implement also these:
+            // bool BindDependencies(IResourceManager2* resMgr);
+            // bool Preload(IResourceManager2* resMgr);
+            // void Unload();
+            // bool Realize(IResourceManager2* resMgr);
+            // void Unrealize();
+            // and don't forget to add
+            // friend class zfw::IResource2;
+
         protected:
             template <class C>
             void* DefaultCast(C* res, const TypeID& resourceClass)
