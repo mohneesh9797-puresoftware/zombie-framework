@@ -14,13 +14,13 @@ namespace gameui
 
     WidgetContainer::~WidgetContainer()
     {
-        iterate2 (widget, widgets)
+        for (auto widget : widgets)
             delete widget;
     }
 
     bool WidgetContainer::AcquireResources()
     {
-        iterate2 (widget, widgets)
+        for (auto widget : widgets)
             if (!widget->AcquireResources())
                 return false;
 
@@ -47,7 +47,7 @@ namespace gameui
         ctnAreaPos = pos;
         ctnAreaSize = size;
 
-        iterate2 (widget, widgets)
+        for (auto const& widget : widgets)
             widget->SetArea(pos, size);
     }
 
@@ -97,17 +97,17 @@ namespace gameui
 
     void WidgetContainer::Draw()
     {
-        iterate2 (widget, widgets)
+        for (auto widget : widgets)
             widget->Draw();
     }
 
     Widget* WidgetContainer::Find(const char* widgetName)
     {
-        iterate2 (widget, widgets)
+        for (auto widget : widgets)
             if (widget->GetNameString() == widgetName)
                 return widget;
 
-        iterate2 (widget, widgets)
+        for (auto widget : widgets)
         {
             Widget *w;
 
@@ -120,13 +120,13 @@ namespace gameui
 
     void WidgetContainer::Layout()
     {
-        iterate2 (widget, widgets)
+        for (auto widget : widgets)
             widget->SetArea(ctnAreaPos, ctnAreaSize);
     }
 
     void WidgetContainer::Move(Int3 vec)
     {
-        iterate2 (widget, widgets)
+        for (auto widget : widgets)
             widget->Move(vec);
     }
 

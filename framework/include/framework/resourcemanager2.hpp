@@ -37,6 +37,8 @@ namespace zfw
             // see GetResourceFlag_t for possible flags
             virtual IResource2* GetResource(const char* recipe, const TypeID& resourceClass, int flags) = 0;
 
+            // provider must stay alive until unregistered
+            // TODO API: why don't we allow registering resource classes directly without this silly proxy?
             virtual bool RegisterResourceProvider(const TypeID* resourceClasses, size_t numResourceClasses,
                     IResourceProvider2* provider) = 0;
 

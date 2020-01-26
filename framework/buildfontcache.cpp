@@ -93,13 +93,13 @@ int main(int argc, char **argv)
         mkdir(cache_dir, 0777);
 #endif
 
-        iterate2 (i, inputs)
+        for (auto const& i : inputs)
         {
-            std::unique_ptr<FaceListFile> face_list(FaceListFile::Open((String&) i));
+            std::unique_ptr<FaceListFile> face_list(FaceListFile::Open(i));
 
             if (face_list == nullptr)
             {
-                fprintf(stderr, "buildfontcache: failed to open `%s`\n", ((String&) i).c_str());
+                fprintf(stderr, "buildfontcache: failed to open `%s`\n", i.c_str());
                 continue;
             }
 
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 
             if ((n = cache->BuildUpdateList(face_list.get(), cache_dir, force, verbose)) < 0)
             {
-                fprintf(stderr, "buildfontcache: failed to process `%s`\n", ((String&) i).c_str());
+                fprintf(stderr, "buildfontcache: failed to process `%s`\n", i.c_str());
                 continue;
             }
 
