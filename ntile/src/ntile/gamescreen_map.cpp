@@ -170,24 +170,24 @@ namespace ntile
                 input->read(&pos, sizeof(pos));
 
                 auto entity = world->CreateEntity();
-                world->SetEntityComponent(entity, Position{ivec3(pos / vec3{ 16.0f, 16.0f, 16.0f })});
-                world->SetEntityComponent(entity, Model3D{"ntile/models/door"});
+                entity.SetComponent(Position{ivec3(pos / vec3{ 16.0f, 16.0f, 16.0f })});
+                entity.SetComponent(Model3D{"ntile/models/door"});
             }
             else if (entName.equals("prop_tree")) {
                 vec3 pos;
                 input->read(&pos, sizeof(pos));
 
                 auto entity = world->CreateEntity();
-                world->SetEntityComponent(entity, Position{ivec3(pos / vec3{ 16.0f, 16.0f, 16.0f })});
-                world->SetEntityComponent(entity, Model3D{"ntile/models/prop_tree"});
+                entity.SetComponent(Position{ivec3(pos / vec3{ 16.0f, 16.0f, 16.0f })});
+                entity.SetComponent(Model3D{"ntile/models/prop_tree"});
             }
             else if (entName.equals("shiroi_house")) {
                 vec3 pos;
                 input->read(&pos, sizeof(pos));
 
                 auto entity = world->CreateEntity();
-                world->SetEntityComponent(entity, Position{ivec3(pos / vec3{ 16.0f, 16.0f, 16.0f })});
-                world->SetEntityComponent(entity, Model3D{"ntile/models/shiroi_house"});
+                entity.SetComponent(Position{ivec3(pos / vec3{ 16.0f, 16.0f, 16.0f })});
+                entity.SetComponent(Model3D{"ntile/models/shiroi_house"});
             }
             else {
                 ErrorBuffer::SetError3(EX_SERIALIZATION_ERR, 2,
