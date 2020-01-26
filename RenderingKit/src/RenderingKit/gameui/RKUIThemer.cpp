@@ -1575,7 +1575,7 @@ namespace RenderingKit
         {
             iterate2 (i, fonts)
             {
-                FontEntry& current = i;
+                FontEntry const& current = i;
             
                 if (current.path == entry.path && current.size == entry.size && current.flags == entry.flags)
                     return i.getIndex();
@@ -1589,7 +1589,7 @@ namespace RenderingKit
         {
             iterate2 (i, fonts)
             {
-                FontEntry& current = i;
+                FontEntry const& current = i;
             
                 if (current.name == font)
                     return i.getIndex();

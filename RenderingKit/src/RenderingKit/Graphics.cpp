@@ -267,7 +267,7 @@ namespace RenderingKit
         // Validate size
         const auto size = currentState->GetSize();
 
-        iterate2 (i, states)
+        for (auto i : states)
         {
             if (i->GetSize() != size)
                 return ErrorBuffer::SetError2(eb, EX_INVALID_ARGUMENT, 3,
@@ -302,7 +302,7 @@ namespace RenderingKit
 
     bool GLGraphics::SelectState(const char* stateNameOrNull)
     {
-        iterate2 (i, states)
+        for (auto i : states)
             if (i->name == stateNameOrNull)
             {
                 currentState = i;

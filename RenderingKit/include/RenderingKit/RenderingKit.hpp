@@ -277,6 +277,7 @@ namespace RenderingKit
             Float3 GetDirection() { return glm::normalize(GetCenter() - GetEye()); }
     };
 
+    // TODO API: implement IResource2 interface
     class IFontFace: public zfw::IResource
     {
         public:

@@ -130,8 +130,8 @@ namespace RenderingKit
         if (!binding->bp.InitWithShader(rm, binding->shader))
             return nullptr;
 
-        iterate2 (i, buffers)
-            binding->attachments.add(shader->GetUniformLocation((*i).nameInShader));
+        for (auto const& buffer : buffers)
+            binding->attachments.add(shader->GetUniformLocation(buffer.nameInShader));
 
         binding->lightPos = shader->GetUniformLocation("lightPos");
         binding->lightAmbient = shader->GetUniformLocation("lightAmbient");
