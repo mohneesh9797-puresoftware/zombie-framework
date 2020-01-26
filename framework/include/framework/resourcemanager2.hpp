@@ -35,6 +35,7 @@ namespace zfw
             virtual void SetTargetState(IResource2::State_t state) = 0;
 
             // see GetResourceFlag_t for possible flags
+            // TODO API: how about a set of boolean arguments instead of an untyped bitfield?
             virtual IResource2* GetResource(const char* recipe, const TypeID& resourceClass, int flags) = 0;
 
             // provider must stay alive until unregistered
@@ -49,6 +50,7 @@ namespace zfw
             virtual void LeaveResourceSection() = 0;
             virtual void ClearResourceSection(ResourceSection_t* sect) = 0;
 
+            // TODO API: terrible names (Put/TransitionAllResourcesIntoState ?)
             virtual bool MakeAllResourcesState(IResource2::State_t state, bool propagateError) = 0;
             virtual bool MakeResourcesInSectionState(ResourceSection_t* sect, IResource2::State_t state, bool propagateError) = 0;
 
@@ -97,12 +99,16 @@ namespace zfw
         public:
             virtual ~IResourceProvider2() {}
 
+            // TODO API: should take IResourceManager2&
+            // TODO API: should return unique_ptr<IResource2>
             virtual IResource2* CreateResource(IResourceManager2* res, const TypeID& resourceClass,
                     const char* recipe, int flags) = 0;
 
             //virtual const char* TryGetResourceClassName(const TypeID& resourceClass) = 0;
     };
 
+    // TODO API: who uses & why is this a good idea?
+    // Note: this makes sense for initialization of pre-ECS entities that need to hold resources
 	class ResourceManagerScope {
 		public:
 			ResourceManagerScope(IResourceManager2* resMgr)
