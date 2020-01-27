@@ -42,6 +42,7 @@ add_dependencies(${library} zombie_framework)
 target_link_libraries(${library} zombie_framework)
 
 target_compile_definitions(${library} PUBLIC -DRENDERING_KIT_STATIC=1)
+target_compile_definitions(${library} PUBLIC STX_NO_STD_VARIANT=1)
 target_compile_definitions(${library} PRIVATE -DGLEW_STATIC=1)
 
 if (USING_OPENGL_ES)
