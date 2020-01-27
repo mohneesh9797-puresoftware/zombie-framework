@@ -13,7 +13,7 @@
 #include <framework/nativedialogs.hpp>
 #include <framework/profiler.hpp>
 #include <framework/scene.hpp>
-#include <framework/system.hpp>
+#include <framework/engine.hpp>
 #include <framework/timer.hpp>
 #include <framework/varsystem.hpp>
 #include <framework/videohandler.hpp>
@@ -163,7 +163,7 @@ namespace zfw
     //  class declaration(s)
     // ====================================================================== //
 
-    class System : public ISystem, public IEssentials
+    class System : public IEngine, public IEssentials
     {
         public:
             virtual bool Init(ErrorBuffer_t* eb, int flags) override;
@@ -326,7 +326,7 @@ namespace zfw
     //  class System
     // ====================================================================== //
 
-    ISystem* CreateSystem()
+    IEngine* CreateEngine()
     {
 #ifdef ZOMBIE_CTR
         CtrPrintInit();

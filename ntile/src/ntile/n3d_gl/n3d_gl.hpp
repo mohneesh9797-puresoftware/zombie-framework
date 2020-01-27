@@ -469,7 +469,7 @@ namespace n3d
             int multisampleLevel, swapControl;
 
         public:
-            SDLPlatform(ISystem* sys, MessageQueue* eventMsgQueue);
+            SDLPlatform(IEngine* sys, MessageQueue* eventMsgQueue);
             virtual ~SDLPlatform() {}
 
             virtual void Init() final override;

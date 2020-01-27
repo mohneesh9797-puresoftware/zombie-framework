@@ -32,7 +32,7 @@ namespace ntile
 
     struct WorldBlock;
 
-    extern ISystem* g_sys;
+    extern IEngine* g_sys;
     extern ErrorBuffer_t* g_eb;
 
     extern unique_ptr<IPlatform> iplat;

@@ -587,7 +587,7 @@ namespace RenderingKit
             virtual ~IRenderingKit() {}
 
 			// `host` is deprecated and ignored
-            virtual bool Init(zfw::ISystem* sys, zfw::ErrorBuffer_t* eb, IRenderingKitHost* host) = 0;
+            virtual bool Init(zfw::IEngine* sys, zfw::ErrorBuffer_t* eb, IRenderingKitHost* host) = 0;
 
             virtual IRenderingManager*  GetRenderingManager() = 0;
             virtual IWindowManager*     GetWindowManager() = 0;

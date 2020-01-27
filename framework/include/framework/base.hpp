@@ -106,6 +106,7 @@ namespace zfw
     class IConfig;
     class IDecoder;
     class IEncoder;
+    class IEngine;
     class IEntityHandler;
     class IEntityVisitor;
     class IEssentials;
@@ -128,7 +129,6 @@ namespace zfw
     class IScriptAPI;
     class IScriptEnv;
     class IScriptHandler;
-    class ISystem;
     class IVarSystem;
     class IVideoHandler;
 

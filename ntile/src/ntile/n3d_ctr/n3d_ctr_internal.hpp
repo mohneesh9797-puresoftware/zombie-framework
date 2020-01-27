@@ -4,7 +4,7 @@
 
 namespace n3d
 {
-    extern ISystem* g_sys;
+    extern IEngine* g_sys;
     extern CTRRenderer* ctrr;
 
     extern unique_ptr<CTRVertexCache> vertexCache;

@@ -97,7 +97,7 @@ namespace n3d
             }
     };
 
-    extern ISystem* g_sys;
+    extern IEngine* g_sys;
     extern GLRenderer* glr;
     extern OpenGLState gl;
     extern unique_ptr<GLVertexCache> vertexCache;

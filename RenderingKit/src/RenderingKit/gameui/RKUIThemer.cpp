@@ -6,7 +6,7 @@
 #include <framework/colorconstants.hpp>
 #include <framework/errorcheck.hpp>
 #include <framework/graphics.hpp>
-#include <framework/system.hpp>
+#include <framework/engine.hpp>
 
 #if ZOMBIE_API_VERSION < 201701
 #include <framework/resourcemanager.hpp>
@@ -495,7 +495,7 @@ namespace RenderingKit
     {
         protected:
             zfw::ErrorBuffer_t* eb;
-            zfw::ISystem* sys;
+            zfw::IEngine* sys;
             IRenderingKit* rk;
             IRenderingManager* rm;
 
@@ -519,9 +519,9 @@ namespace RenderingKit
             ~RKUIThemer();
 
 #if ZOMBIE_API_VERSION < 201701
-            virtual void Init(zfw::ISystem* sys, IRenderingKit* rk, IResourceManager* resRef) override;
+            virtual void Init(zfw::IEngine* sys, IRenderingKit* rk, IResourceManager* resRef) override;
 #else
-            virtual bool Init(zfw::ISystem* sys, IRenderingKit* rk, IResourceManager2* res) override;
+            virtual bool Init(zfw::IEngine* sys, IRenderingKit* rk, IResourceManager2* res) override;
 #endif
 
             virtual bool AcquireResources() override;
@@ -550,7 +550,7 @@ namespace RenderingKit
             bool AcquireFontResources(FontEntry& entry);
             RKUIPainter* GetPainter() { return painter.get(); }
             IResourceManager* GetResourceManager() { return res; }
-            ISystem* GetSys() { return sys; }
+            IEngine* GetSys() { return sys; }
     };
 
     bool TextObj::LayoutCentered(IFontFace* face, const char* label, int unused)
@@ -1429,7 +1429,7 @@ namespace RenderingKit
     }
 
 #if ZOMBIE_API_VERSION < 201701
-    void RKUIThemer::Init(zfw::ISystem* sys, IRenderingKit* rk, IResourceManager* res)
+    void RKUIThemer::Init(zfw::IEngine* sys, IRenderingKit* rk, IResourceManager* res)
     {
         SetEssentials(sys->GetEssentials());
 
@@ -1442,7 +1442,7 @@ namespace RenderingKit
         painter.reset(new RKUIPainter(rm, res));
     }
 #else
-    bool RKUIThemer::Init(zfw::ISystem* sys, IRenderingKit* rk, IResourceManager2* res)
+    bool RKUIThemer::Init(zfw::IEngine* sys, IRenderingKit* rk, IResourceManager2* res)
     {
         SetEssentials(sys->GetEssentials());
 

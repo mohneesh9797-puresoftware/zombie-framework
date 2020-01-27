@@ -24,7 +24,7 @@ namespace zfw
         kSysNonInteractive = 2,
     };
 
-    class ISystem
+    class IEngine
     {
         public:
             // public variables:
@@ -105,8 +105,8 @@ namespace zfw
             virtual Timer*              CreateTimer() = 0;
 
         protected:
-            ~ISystem() {}
+            ~IEngine() {}
     };
 
-    ISystem* CreateSystem();
+    IEngine* CreateEngine();
 }

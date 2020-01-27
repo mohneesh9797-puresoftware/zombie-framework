@@ -25,6 +25,7 @@ set(sources
         include/framework/broadcasthandler.hpp
         include/framework/colorconstants.hpp
         include/framework/datamodel.hpp
+        include/framework/engine.hpp
         include/framework/entity.hpp
         include/framework/entityhandler.hpp
         include/framework/entityworld.hpp
@@ -52,7 +53,6 @@ set(sources
         include/framework/scripting.hpp
         include/framework/shader_preprocessor.hpp
         include/framework/studio/recentfiles.hpp
-        include/framework/system.hpp
         include/framework/timer.hpp
         include/framework/utility/algebrahelpers.hpp
         include/framework/utility/errorbuffer.hpp
@@ -81,6 +81,7 @@ set(sources
         src/framework/codecs/jfifcodec.cpp
         src/framework/codecs/lodepngcodec.cpp
         src/framework/datamodel.cpp
+        src/framework/engine.cpp
         src/framework/entityhandler.cpp
         src/framework/entityworld.cpp
         src/framework/filesystem_std.cpp
@@ -95,7 +96,6 @@ set(sources
         src/framework/scene.cpp
         src/framework/shader_preprocessor.cpp
         src/framework/studio/recentfiles.cpp
-        src/framework/system.cpp
         src/framework/timer.cpp
         src/framework/utility/algebrahelpers.cpp
         src/framework/utility/essentials.cpp
@@ -136,23 +136,32 @@ set(sources
         )
 
 if (UNIX AND NOT APPLE)
-    file(GLOB add_sources src/framework/linux/*)
-    list(APPEND sources ${add_sources})
+    list(APPEND sources
+            src/framework/linux/nativedialogs.cpp
+            )
 endif()
 
 if (WITH_BLEB)
-    file(GLOB add_sources src/framework/bleb/*.cpp)
-    list(APPEND sources ${add_sources})
+    list(APPEND sources
+            src/framework/bleb/filesystem_bleb.cpp
+            src/framework/bleb/studiobleb.cpp
+            )
 endif()
 
 if (ZOMBIE_WITH_LUA)
-    file(GLOB add_sources src/framework/lua/*.cpp)
-    list(APPEND sources ${add_sources})
+    list(APPEND sources
+            src/framework/lua/luascript.cpp
+            src/framework/lua/private.hpp
+            )
 endif()
 
 if (WITH_ZTYPE)
-    file(GLOB add_sources src/ztype/*.cpp)
-    list(APPEND sources ${add_sources})
+    list(APPEND sources
+            src/ztype/facefile.cpp
+            src/ztype/facelistfile.cpp
+            src/ztype/fontcache.cpp
+            src/ztype/rasterizer.cpp
+            )
 endif()
 
 if (WITH_JPEG)
@@ -164,8 +173,9 @@ if (WITH_LODEPNG)
 endif()
 
 if (WIN32)
-    file(GLOB add_sources src/framework/win32/*)
-    list(APPEND sources ${add_sources})
+    list(APPEND sources
+            src/framework/win32/nativedialogs.cpp
+            )
 endif()
 
 add_library(${library} ${sources})

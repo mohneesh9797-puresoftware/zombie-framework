@@ -1,7 +1,7 @@
 
 #include "n3d_gl_internal.hpp"
 
-#include <framework/system.hpp>
+#include <framework/engine.hpp>
 
 namespace n3d
 {

@@ -262,7 +262,7 @@ namespace n3d
             }
     };
 
-    SDLPlatform::SDLPlatform(ISystem* sys, MessageQueue* eventMsgQueue) : eventMsgQueue(eventMsgQueue)
+    SDLPlatform::SDLPlatform(IEngine* sys, MessageQueue* eventMsgQueue) : eventMsgQueue(eventMsgQueue)
     {
         g_sys = sys;
         displayWindow = nullptr;

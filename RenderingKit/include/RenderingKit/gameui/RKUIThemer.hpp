@@ -16,9 +16,9 @@ namespace RenderingKit
             virtual ~IRKUIThemer() {}
 
 #if ZOMBIE_API_VERSION < 201701
-            virtual void Init(zfw::ISystem* sys, IRenderingKit* rk, zfw::IResourceManager* resRef) = 0;
+            virtual void Init(zfw::IEngine* sys, IRenderingKit* rk, zfw::IResourceManager* resRef) = 0;
 #else
-            virtual bool Init(zfw::ISystem* sys, IRenderingKit* rk, zfw::IResourceManager2* res) = 0;
+            virtual bool Init(zfw::IEngine* sys, IRenderingKit* rk, zfw::IResourceManager2* res) = 0;
 #endif
 
             virtual IFontFace* GetFont(intptr_t fontIndex) = 0;

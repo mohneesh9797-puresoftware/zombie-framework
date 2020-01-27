@@ -5,12 +5,12 @@
 #include "SMAA/AreaTex.h"
 #include "SMAA/SearchTex.h"
 
+#include <framework/engine.hpp>
 #include <framework/errorbuffer.hpp>
-#include <framework/system.hpp>
 
 namespace n3d
 {
-    ISystem* g_sys;
+    IEngine* g_sys;
     GLRenderer* glr;
     OpenGLState gl;
     unique_ptr<GLVertexCache> vertexCache;

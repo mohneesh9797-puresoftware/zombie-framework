@@ -3,8 +3,8 @@
 
 #include "../modelloader.hpp"
 
+#include <framework/engine.hpp>
 #include <framework/filesystem.hpp>
-#include <framework/system.hpp>
 
 namespace n3d
 {
