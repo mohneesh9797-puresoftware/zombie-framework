@@ -1172,6 +1172,11 @@ namespace zfw
     {
         const char* desc;
 
+        if (eb == nullptr)
+        {
+            eb = s_eb;
+        }
+
         if (!Params::GetValueForKey(eb->params, "desc", desc))
             desc = "Unknown error.";
 
