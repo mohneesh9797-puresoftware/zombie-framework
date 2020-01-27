@@ -37,10 +37,10 @@ namespace zfw
     bool CsvDatabase::GetRecordById(const char* tableName, uint64_t recordId, const StructType& record_type, void* record_out) {
         for (size_t i = 0; i < record_type.numFields; i++) {
             try {
-                const char* value = doc.GetCell(string(record_type.fieldNames[i]), std::to_string(recordId));
+                auto value = doc.GetCell<string>(string(record_type.fieldNames[i]), std::to_string(recordId));
 
                 auto accessor = record_type.AccessField(record_type, record_out, i);
-                accessor.type.FromString(accessor.type, accessor.value);
+                accessor.type.NewFromString(accessor.type, accessor.value, value.c_str());
             }
             catch (std::out_of_range& ex) {
                 return false;

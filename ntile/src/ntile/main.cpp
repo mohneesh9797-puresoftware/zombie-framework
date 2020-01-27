@@ -231,10 +231,10 @@ namespace ntile
     }
 }
 
-namespace zfw {
-    template <>
-    zfw::IKeyValueRecordMapper& GetMapper<zfw::IKeyValueRecordMapper, ntile::Map>() {
-        static ntile::MapKeyValueRecordMapper mapper;
-        return mapper;
-    }
-}
+//namespace zfw {
+//    template <>
+//    zfw::IKeyValueRecordMapper& GetMapper<zfw::IKeyValueRecordMapper, ntile::Map>() {
+//        static ntile::MapKeyValueRecordMapper mapper;
+//        return mapper;
+//    }
+//}

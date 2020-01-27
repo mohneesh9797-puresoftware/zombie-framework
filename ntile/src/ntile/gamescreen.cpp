@@ -126,7 +126,9 @@ namespace ntile
         mouseBlock = Int2(INT16_MIN, INT16_MIN);
         selectedBlock = Int2(INT16_MIN, INT16_MIN);
         mouseEntity = nullptr;
+#if ZOMBIE_API_VERSION < 201901
         selectedEntity = nullptr;
+#endif
         edit_movingEntity = false;
         blocks = nullptr;
 
@@ -708,6 +710,7 @@ namespace ntile
                 {
                     auto ev = msg->Data<EventMouseMove>();
 
+#if ZOMBIE_API_VERSION < 201901
                     if (edit_movingEntity)
                     {
                         ZFW_ASSERT(selectedEntity != nullptr)
@@ -717,6 +720,7 @@ namespace ntile
                         const Float2 steps = glm::round(Float2(ev->x - edit_entityMovementOrigin.x, ev->y - edit_entityMovementOrigin.y) / tileSize);
                         ent->SetPos(edit_entityInitialPos + Float3(steps * tileSize, 0.0f));
                     }
+#endif
 
                     r_mousePos = Int2(ev->x, ev->y);
 
@@ -749,7 +753,9 @@ namespace ntile
                                 if (editingMode)
                                 {
                                     Edit_SelectBlock(mouseBlock);
+#if ZOMBIE_API_VERSION < 201901
                                     Edit_SelectEntity(mouseEntity);
+#endif
                                 }
 
 //                                ICommonEntity* ent = dynamic_cast<ICommonEntity*>(mouseEntity);

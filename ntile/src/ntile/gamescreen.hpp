@@ -87,9 +87,11 @@ namespace ntile
             Int3 mouseWorldPos;
             Int2 goodMousePos;      // determines block picking (not updated when mouse over UI)
             IEntity* mouseEntity;
+#if ZOMBIE_API_VERSION < 201901
             IEntityReflection* selectedEntity;
             List<NamedValuePtr> entityProperties;
             NamedValuePtr* editedProperty;
+#endif
 
             bool edit_movingEntity;
             Float3 edit_entityInitialPos;
@@ -144,7 +146,9 @@ namespace ntile
             //void Edit_InitEditingUI();
             void Edit_InsertBlock(Short2 pos, int type);
             void Edit_SelectBlock(Short2 blockXY);
+#if ZOMBIE_API_VERSION < 201901
             void Edit_SelectEntity(IEntity* entity);
+#endif
             void Edit_ToolEdit(Int3 worldPos);
 
             void OnEventControlUsed(gameui::EventControlUsed* payload);

@@ -259,6 +259,7 @@ namespace ntile
         editing_block_type->SetSelection(selection);
     }
 
+#if ZOMBIE_API_VERSION < 201901
     void GameScreen::Edit_SelectEntity(IEntity* entity)
     {
         selectedEntity = dynamic_cast<IEntityReflection*>(entity);
@@ -297,6 +298,7 @@ namespace ntile
             editing_entity_properties->RemoveAll();
         }
     }
+#endif
 
     template <bool randomize>
     void GameScreen::Edit_CircleTerrainChange(Int2 tileXY, int radius, int raise, int min)
@@ -470,6 +472,7 @@ namespace ntile
 
             g_sys->Printf(kLogDebugInfo, "Edit_SaveMap: rc=%i", rc);
         }
+#if ZOMBIE_API_VERSION < 201901
         else if (payload->widget->GetNameString() == "editing_move_entity")
         {
             ZFW_ASSERT(selectedEntity != nullptr)
@@ -557,6 +560,7 @@ namespace ntile
                 }
             }
         }
+#endif
     }
 
     void GameScreen::OnEventItemSelected(gameui::EventItemSelected* payload)

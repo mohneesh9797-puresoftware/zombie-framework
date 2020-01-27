@@ -114,8 +114,9 @@ namespace zfw
         bool isArray;
         bool isStruct;
 
-        void (*New)(const GenericType& this_, void* value);
-        void (*Delete)(const GenericType& this_, void* value);
+        void (*New)             (const GenericType& this_, void* value);
+        void (*NewFromString)   (const GenericType& this_, void* value, const char* string);
+        void (*Delete)          (const GenericType& this_, void* value);
     };
 
 //    struct ArrayType : GenericType {
