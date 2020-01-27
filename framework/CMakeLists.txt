@@ -217,6 +217,10 @@ if (WITH_ZTYPE AND NOT EMSCRIPTEN)
         target_include_directories(${library} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/freetype2/include)
         target_link_libraries(${library} freetype)
     endif()
+elseif (WITH_ZTYPE AND EMSCRIPTEN)
+    # use pre-compiled Freetype
+    target_compile_options(${library} PRIVATE "SHELL:-s USE_FREETYPE=1")
+    target_link_options(${library} PUBLIC "SHELL:-s USE_FREETYPE=1")
 endif()
 
 # jpeg
@@ -269,6 +273,12 @@ if (ZOMBIE_WITH_LUA)
     endif()
 
     target_compile_definitions(${library} PUBLIC -DZOMBIE_WITH_LUA=1)
+endif()
+
+# Other stuff
+if (EMSCRIPTEN)
+    target_compile_options(${library} PRIVATE "SHELL:-s FORCE_FILESYSTEM=1")
+    target_link_options(${library} PUBLIC "SHELL:-s FORCE_FILESYSTEM=1")
 endif()
 
 if (UNIX)

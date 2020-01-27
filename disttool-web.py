@@ -40,6 +40,9 @@ os.chdir(build_dir)
 product_js_filename = project_name + '.js'
 product_js_path = os.path.join(products_dir, product_js_filename)
 
+product_wasm_filename = project_name + '.wasm'
+product_wasm_path = os.path.join(products_dir, product_wasm_filename)
+
 rc = subprocess.call([
 	'python',
 	os.path.join(basepath, emscripten_path, 'emcmake'),
@@ -49,13 +52,14 @@ rc = subprocess.call([
 	'-DCMAKE_BUILD_TYPE=RelMinSize',
 	'-DBUILD_SHARED_LIBS=0',
 	'-G',
+	# TODO: can use ninja ?
 	'MinGW Makefiles' if os.name == 'nt' else 'Unix Makefiles',
 	'..'])
 
 if rc != 0:
 	sys.exit(-1)
 
-rc = subprocess.call(['make'])
+rc = subprocess.call(['make'] + sys.argv[3:])
 
 if rc != 0:
 	sys.exit(-1)
@@ -71,14 +75,16 @@ if project_url:
 else:
 	template_name = 'template.html'
 
-html = open(os.path.join(common_assets_path, template_name)).read().decode('utf-8')
+html = open(os.path.join(common_assets_path, template_name), "rt").read()
 
 html = html.replace('{{PROJECT_NAME}}', project_name)
 html = html.replace('{{PROJECT_URL}}', project_url)
 
 open(os.path.join(dist_dir, 'index.html'), 'wb').write(html.encode('utf-8'))
 
+# TODO: why so selective? this is very fragile
 shutil.copyfile(product_js_path, os.path.join(dist_dir, project_name + '.js'))
+shutil.copyfile(product_wasm_path, os.path.join(dist_dir, project_name + '.wasm'))
 
 # Build data package
 
