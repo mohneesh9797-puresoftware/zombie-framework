@@ -154,16 +154,17 @@ namespace zfw
 
     // h-values for mouse, keyboard events:
     //  h <= -2:    no widget was affected by this event (yet)
-    static const int h_new = -2;
+    inline constexpr int h_new = -2;
     //  h = -1:     a widget was indirectly affected by this event
     //  example: closing a dropdown menu by clicking outside of it
-    static const int h_indirect = -1;
+    inline constexpr int h_indirect = -1;
     //  h = 0:      a widget was directly affected by this event
     //  example: pressing a button; generally clicking/moving mouse within any widget
-    static const int h_direct = 0;
+    inline constexpr int h_direct = 0;
     //  h = 1:      stop propagating this event immediately
-    static const int h_stop = 1;
+    inline constexpr int h_stop = 1;
 
-    static const float f_pi = 3.14159265358979323846f;
-    static const float f_halfpi = 1.57079632679f;
+    // TODO C++20: use std::numbers::pi
+    inline constexpr float f_pi = 3.14159265358979323846f;
+    inline constexpr float f_halfpi = 1.57079632679f;
 }
