@@ -987,9 +987,12 @@ namespace zfw
 		if (frameCounter == profileFrame)
 			profiler->EnterSection(profVideoHandler);
 
-		videoHandler->BeginFrame();
-		videoHandler->ReceiveEvents();
-		videoHandler->BeginDrawFrame();
+        if (videoHandler)
+        {
+            videoHandler->BeginFrame();
+            videoHandler->ReceiveEvents();
+            videoHandler->BeginDrawFrame();
+        }
 
 		if (frameCounter == profileFrame)
 		{
@@ -1022,7 +1025,11 @@ namespace zfw
 			profiler->EnterSection(profVideoHandler2);
 		}
 
-		videoHandler->EndFrame(tickAccum);
+        if (videoHandler)
+        {
+            videoHandler->EndFrame(tickAccum);
+        }
+
 		tickAccum = 0;
 
 		if (frameCounter == profileFrame)
