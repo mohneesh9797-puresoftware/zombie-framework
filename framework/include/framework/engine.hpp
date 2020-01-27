@@ -85,7 +85,7 @@ namespace zfw
 
             // Error handling functions
             virtual void DisplayError( const ErrorBuffer_t* eb, bool fatal ) = 0;
-            virtual void PrintError( const ErrorBuffer_t* eb, LogType_t logType ) = 0;
+            virtual void PrintError( const ErrorBuffer_t* ebOrNull, LogType_t logType ) = 0;
 
             // Localization functions
             virtual const char* Localize(const char* text) = 0;
