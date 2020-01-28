@@ -168,6 +168,8 @@ namespace zfw
     class System : public IEngine, public IEssentials
     {
         public:
+            ~System() override { Shutdown(); }
+
             virtual bool Init(ErrorBuffer_t* eb, int flags) override;
             virtual void Shutdown() override;
 
@@ -340,6 +342,18 @@ namespace zfw
 
         s_sys.reset(new System);
         return s_sys.get();
+    }
+
+    std::unique_ptr<IEngine> CreateEngine2(ErrorBuffer_t* eb, int initFlags, int argc, char** argv)
+    {
+        auto engine = std::make_unique<System>();
+
+        if (!engine->Init(eb, initFlags)) {
+            engine.reset();
+        }
+
+        engine->ParseArgs1(argc, argv);
+        return engine;
     }
 
     bool System::Init(ErrorBuffer_t* eb, int flags)
