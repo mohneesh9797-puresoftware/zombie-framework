@@ -143,9 +143,6 @@ namespace zfw
     static int tickRate, tickAccum;
     static double tickTime, timeAccum;
 
-    static bool breakLoop, changeScene;
-    static shared_ptr<IScene> scene, newScene;
-
     //static Var_t* dev_errorbreak;
     
     static PerfTimer timer;
@@ -295,6 +292,10 @@ namespace zfw
             // systems
             std::vector<unique_ptr<ISystem>> systems;
 
+            // scene
+            bool breakLoop = false, changeScene = false;
+            shared_ptr<IScene> scene, newScene;
+
             // synchronization
             li::Mutex ioMutex, logMutex, stdoutMutex;
 
@@ -427,6 +428,8 @@ namespace zfw
 
     void System::Shutdown()
     {
+        scene.reset();
+
         videoHandler.reset();
 
         profiler.reset();
