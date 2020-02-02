@@ -17,7 +17,7 @@ namespace zfw
         ComponentStruct const* GetComponent() const;
 
         template <typename ComponentStruct>
-        void SetComponent(const ComponentStruct &data);
+        ComponentStruct const& SetComponent(const ComponentStruct &data);
     };
 
     class IEntityWorld2
@@ -40,6 +40,7 @@ namespace zfw
              */
             virtual void* GetEntityComponent(EntityId id, IComponentType &type) = 0;
 
+            // TODO API: this should return void const*
             /**
              *
              * @param id
@@ -84,8 +85,8 @@ namespace zfw
     }
 
     template <typename ComponentStruct>
-    void EntityHandle::SetComponent(const ComponentStruct &data) {
-        world->SetEntityComponent(entityId, GetComponentType<ComponentStruct>(), &data);
+    ComponentStruct const& EntityHandle::SetComponent(const ComponentStruct &data) {
+        return *static_cast<ComponentStruct*>(world->SetEntityComponent(entityId, GetComponentType<ComponentStruct>(), &data));
     }
 }
 
