@@ -282,7 +282,8 @@ namespace client
             for (size_t i = 0; i < numPrimitives; i++)
             {
                 auto prim = mdlPrimitives[i];
-                primitives->Add(sprintf_63("%i (%g %g %g)+(%g %g %g) %06X", (int)i, prim->a.x, prim->a.y, prim->a.z, prim->b.x, prim->b.y, prim->b.z, prim->colour));
+                uint32_t colorHex = prim->colour.x * 0x10000 + prim->colour.y * 0x100 + prim->colour.z;
+                primitives->Add(sprintf_63("%i (%g %g %g)+(%g %g %g) %06X", (int)i, prim->a.x, prim->a.y, prim->a.z, prim->b.x, prim->b.y, prim->b.z, colorHex));
             }
         }
 
