@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(library ${PROJECT_NAME})
 
 add_subdirectory(dependencies/bleb)
+add_subdirectory(dependencies/glm)
 add_subdirectory(dependencies/libcfx2)
 add_subdirectory(dependencies/littl)
 
@@ -223,6 +224,12 @@ elseif (WITH_ZTYPE AND EMSCRIPTEN)
     target_link_options(${library} PUBLIC "SHELL:-s USE_FREETYPE=1")
 endif()
 
+# glm
+target_link_libraries(${library} glm::glm)
+
+# Restore glm behavior from before v0.9.9.x (default initialization) until the entire codebase is updated
+target_compile_definitions(${library} PUBLIC GLM_FORCE_CTOR_INIT)
+
 # jpeg
 if (WITH_JPEG)
     find_package(JPEG)
@@ -288,7 +295,6 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     include
-    dependencies/glm
     dependencies/GSL/include
     dependencies/PubSub
     dependencies/reflector/include
