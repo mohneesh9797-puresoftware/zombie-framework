@@ -1,29 +1,38 @@
 language: cpp
 dist: bionic
-sudo: false
 addons:
   apt:
     packages:
       - libsdl2-dev
-script:
-  - cmake $COMPONENT && make $TARGET
-compiler:
-  - clang
-  - gcc
-os:
-  - linux
-  #- osx
-env:
-  - COMPONENT=examples/minimal TARGET=minimal
-  - COMPONENT=examples/rendering-kit-demo TARGET=rendering-kit-demo
-  - COMPONENT=examples/ContainerDeferredShading TARGET=ContainerDeferredShading
-  - COMPONENT=examples/ContainerHelloWorld TARGET=ContainerHelloWorld
-  - COMPONENT=Lanthaia TARGET=Lanthaia
-  - COMPONENT=ntile TARGET=ntile
-  - COMPONENT=tools/mapcompiler TARGET=mapcompiler
-  - COMPONENT=WorldCraft TARGET=worldcraft2
 
-matrix:
+os: linux
+compiler: gcc
+
+jobs:
+  include:
+    - name: minimal
+      script: |
+        cmake examples/minimal && make minimal
+        ./minimal
+    - name: examples/rendering-kit-demo
+      script: cmake examples/rendering-kit-demo && make rendering-kit-demo
+    - name: examples/Container3DScene
+      script: cmake examples/Container3DScene && make Container3DScene
+    - name: examples/ContainerDeferredShading
+      script: cmake examples/ContainerDeferredShading && make ContainerDeferredShading
+    - name: examples/ContainerHelloWorld
+      script: cmake examples/ContainerHelloWorld && make ContainerHelloWorld
+    - name: examples/ContainerMapView
+      script: cmake examples/ContainerMapView && make ContainerMapView
+    - name: Lanthaia
+      script: cmake Lanthaia && make Lanthaia
+    - name: ntile
+      script: cmake ntile && make ntile
+    - name: tools/mapcompiler
+      script: cmake tools/mapcompiler && make mapcompiler
+    - name: WorldCraft
+      script: cmake WorldCraft && make worldcraft2
+
   allow_failures:
     # GCC+ASAN on Travis is broken beyond repair
     #- compiler: gcc
