@@ -83,11 +83,13 @@ namespace zfw
 
     using reflection::UUID_t;
 
+    // TODO API: who uses this?
     // -1   is "self" (not valid for over-the-air messages)
     // 0    is the host (if applicable)
     // 1+   are connected clients
     typedef int32_t ClientId;
 
+    typedef intptr_t EntityId;
     typedef std::type_index TypeID;
 
     // enums

@@ -20,32 +20,32 @@ namespace zfw
         PerInstanceDataPool(IComponentType& type) : type(type) {}
         ~PerInstanceDataPool();
 
-        void* Get(intptr_t entityId);
-        void* GetOrAlloc(intptr_t entityId, bool* wasCreated_out);
-        void Iterate(std::function<void(intptr_t entityId, void* component_data)> callback);
+        void* Get(EntityId entityId);
+        void* GetOrAlloc(EntityId entityId, bool* wasCreated_out);
+        void Iterate(std::function<void(EntityId entityId, void* component_data)> callback);
 
     private:
         IComponentType& type;
-        std::unordered_map<intptr_t, void*> perInstanceData;
+        std::unordered_map<EntityId, void*> perInstanceData;
     };
 
     class EntityWorld2 : public IEntityWorld2 {
     public:
         EntityWorld2(IBroadcastHandler& broadcast) : broadcast(broadcast) {}
 
-        intptr_t CreateEntityId() final;
+        EntityId CreateEntityId() final;
 
-        void DestroyEntity(intptr_t id) final;
+        void DestroyEntity(EntityId id) final;
 
-        void* GetEntityComponent(intptr_t id, IComponentType &type) final;
-        void* SetEntityComponent(intptr_t id, IComponentType &type, const void *data) final;
+        void* GetEntityComponent(EntityId id, IComponentType &type) final;
+        void* SetEntityComponent(EntityId id, IComponentType &type, const void *data) final;
 
-        void IterateEntitiesByComponent(IComponentType &type, std::function<void(intptr_t entityId, void* component_data)> callback) final;
+        void IterateEntitiesByComponent(IComponentType &type, std::function<void(EntityId entityId, void* component_data)> callback) final;
 
     private:
         IBroadcastHandler& broadcast;
 
-        intptr_t nextId = 0;
+        EntityId nextId = 0;
 
         // TODO: re-do as vector by component id
         std::unordered_map<IComponentType*, unique_ptr<PerInstanceDataPool>> componentPools;
@@ -59,15 +59,15 @@ namespace zfw
         return std::make_unique<EntityWorld2>(broadcast);
     }
 
-    intptr_t EntityWorld2::CreateEntityId() {
+    EntityId EntityWorld2::CreateEntityId() {
         return this->nextId++;
     }
 
-    void EntityWorld2::DestroyEntity(intptr_t id) {
+    void EntityWorld2::DestroyEntity(EntityId id) {
         // FIXME!
     }
 
-    void* EntityWorld2::GetEntityComponent(intptr_t id, IComponentType &type) {
+    void* EntityWorld2::GetEntityComponent(EntityId id, IComponentType &type) {
         if (id == kInvalidEntity) {
             return nullptr;
         }
@@ -82,7 +82,7 @@ namespace zfw
         }
     }
 
-    void EntityWorld2::IterateEntitiesByComponent(IComponentType &type, std::function<void(intptr_t entityId, void* component_data)> callback) {
+    void EntityWorld2::IterateEntitiesByComponent(IComponentType &type, std::function<void(EntityId entityId, void* component_data)> callback) {
         auto iter = componentPools.find(&type);
 
         if (iter != componentPools.end()) {
@@ -90,7 +90,7 @@ namespace zfw
         }
     }
 
-    void* EntityWorld2::SetEntityComponent(intptr_t id, IComponentType &type, const void *data) {
+    void* EntityWorld2::SetEntityComponent(EntityId id, IComponentType &type, const void *data) {
         auto iter = componentPools.find(&type);
 
         PerInstanceDataPool* pool;
@@ -134,7 +134,7 @@ namespace zfw
         }
     }
 
-    void* PerInstanceDataPool::Get(intptr_t entityId) {
+    void* PerInstanceDataPool::Get(EntityId entityId) {
         auto iter = perInstanceData.find(entityId);
 
         if (iter == perInstanceData.end()) {
@@ -145,7 +145,7 @@ namespace zfw
         }
     }
 
-    void* PerInstanceDataPool::GetOrAlloc(intptr_t entityId, bool* wasCreated_out) {
+    void* PerInstanceDataPool::GetOrAlloc(EntityId entityId, bool* wasCreated_out) {
         auto iter = perInstanceData.find(entityId);
 
         if (iter == perInstanceData.end()) {
@@ -161,7 +161,7 @@ namespace zfw
         }
     }
 
-    void PerInstanceDataPool::Iterate(std::function<void(intptr_t entityId, void* component_data)> callback) {
+    void PerInstanceDataPool::Iterate(std::function<void(EntityId entityId, void* component_data)> callback) {
         for (const auto& pair : this->perInstanceData) {
             callback(pair.first, pair.second);
         }

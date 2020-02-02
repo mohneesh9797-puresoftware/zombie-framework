@@ -12,7 +12,7 @@ namespace zfw
 
     class IBroadcastSubscriber {
     public:
-        virtual void OnComponentEvent(IEntityWorld2& world, intptr_t entityId, IComponentType &type, void *data, ComponentEvent event) {}
+        virtual void OnComponentEvent(IEntityWorld2& world, EntityId entityId, IComponentType &type, void *data, ComponentEvent event) {}
         virtual void OnMessageBroadcast(intptr_t type, const void* payload) {}
     };
 
@@ -20,7 +20,7 @@ namespace zfw
     public:
         virtual ~IBroadcastHandler() = default;
 
-        virtual void BroadcastComponentEvent(IEntityWorld2& world, intptr_t entityId, IComponentType &type, void *data, ComponentEvent event) = 0;
+        virtual void BroadcastComponentEvent(IEntityWorld2& world, EntityId entityId, IComponentType &type, void *data, ComponentEvent event) = 0;
         virtual void BroadcastMessage(intptr_t type, const void* payload) = 0;
 
         virtual void SubscribeToComponentType(IBroadcastSubscriber& sub, IComponentType &type) = 0;
