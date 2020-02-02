@@ -11,6 +11,8 @@ namespace zfw
         IEntityWorld2* world;
         EntityId entityId;
 
+        inline void Destroy() const;
+
         template <typename ComponentStruct>
         void SetComponent(const ComponentStruct &data);
     };
@@ -68,6 +70,10 @@ namespace zfw
                 this->SetEntityComponent(id, GetComponentType<ComponentStruct>(), &data);
             }
     };
+
+    void EntityHandle::Destroy() const {
+        world->DestroyEntity(entityId);
+    }
 
     template <typename ComponentStruct>
     void EntityHandle::SetComponent(const ComponentStruct &data) {
