@@ -63,6 +63,7 @@ set(sources
         include/framework/studio/recentfiles.hpp
         include/framework/timer.hpp
         include/framework/utility/algebrahelpers.hpp
+        include/framework/utility/entityview.hpp
         include/framework/utility/errorbuffer.hpp
         include/framework/utility/essentials.hpp
         include/framework/utility/keytracker.hpp
