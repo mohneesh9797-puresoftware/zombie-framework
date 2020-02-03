@@ -28,6 +28,11 @@ jobs:
       script: |
         cmake examples/minimal && make minimal                                                     
         ./minimal       
+    - name: minimal macOS
+      os: osx
+      script: |
+        cmake examples/minimal && make minimal
+        ./minimal
     - name: examples/rendering-kit-demo
       script: cmake examples/rendering-kit-demo && make rendering-kit-demo
     - name: examples/Container3DScene
