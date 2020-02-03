@@ -8,13 +8,13 @@ def try_makedirs(path):
 	except: pass
 
 if len(sys.argv) <= 2:
-	print('usage: disttool-web.py <project-path> <emscripten-path>', file=sys.stderr)
+	print('usage: disttool-web.py <project-path>', file=sys.stderr)
 	exit(-1)
 
 basepath = os.path.join(os.getcwd(), sys.argv[1])
-os.chdir(basepath)
+make_args = sys.argv[2:]
 
-emscripten_path = sys.argv[2]
+os.chdir(basepath)
 
 # Load configuration
 config = json.load(open('dist.json'))
@@ -44,8 +44,7 @@ product_wasm_filename = project_name + '.wasm'
 product_wasm_path = os.path.join(products_dir, product_wasm_filename)
 
 rc = subprocess.call([
-	'python',
-	os.path.join(basepath, emscripten_path, 'emcmake'),
+	'emcmake',
 	'cmake',
 	#'-DCMAKE_TOOLCHAIN_FILE="\cmake\Modules\Platform\Emscripten.cmake"'
 	'-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=' + products_dir,
@@ -59,7 +58,7 @@ rc = subprocess.call([
 if rc != 0:
 	sys.exit(-1)
 
-rc = subprocess.call(['make'] + sys.argv[3:])
+rc = subprocess.call(['make'] + make_args)
 
 if rc != 0:
 	sys.exit(-1)
@@ -102,8 +101,7 @@ for path in assets:
 data_js_path = os.path.join(basepath, dist_dir, project_name + '-data.js')
 
 subprocess.call([
-	'python',
-	os.path.join(basepath, emscripten_path, 'tools', 'file_packager.py'),
+	os.path.join(os.getenv("EMSDK"), 'upstream', 'emscripten', 'tools', 'file_packager.py'),
 	'TARGET',
 	'--js-output=' + data_js_path
 	] + args)
