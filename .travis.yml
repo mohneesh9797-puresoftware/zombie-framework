@@ -14,6 +14,11 @@ jobs:
       script: |
         cmake examples/minimal && make minimal
         ./minimal
+    - name: minimal arm64                
+      arch: arm64                                                                                  
+      script: |
+        cmake examples/minimal && make minimal                                                     
+        ./minimal       
     - name: examples/rendering-kit-demo
       script: cmake examples/rendering-kit-demo && make rendering-kit-demo
     - name: examples/Container3DScene
@@ -39,3 +44,6 @@ jobs:
 
     # OS X port hasn't been touched in years
     - os: osx
+
+    # Completely experimental
+    - arch: arm64
