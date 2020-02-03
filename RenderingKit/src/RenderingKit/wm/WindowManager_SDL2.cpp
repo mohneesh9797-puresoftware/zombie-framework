@@ -293,10 +293,11 @@ namespace RenderingKit
 
 		// Note: this isn't drivern by RENDERING_KIT_USING_OPENGL_ES, because that doesn't actually
 		// use OpenGL ES -- just a functional subset of standard GL.
+        // (And what exactly is the difference? Just the suffix on functions and constants?)
 #ifdef ZOMBIE_EMSCRIPTEN
-		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #else
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -321,8 +322,13 @@ namespace RenderingKit
 
         int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
-        if (r_fullscreen == 1)
+        if (r_fullscreen == 1) {
+#ifndef ZOMBIE_EMSCRIPTEN
             flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#else
+            flags |= SDL_WINDOW_FULLSCREEN;
+#endif
+        }
 
         if (ivs->GetVariableOrDefault<bool>("r_noframe", false))
             flags |= SDL_WINDOW_BORDERLESS;
