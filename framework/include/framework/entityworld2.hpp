@@ -14,6 +14,9 @@ namespace zfw
         inline void Destroy() const;
 
         template <typename ComponentStruct>
+        ComponentStruct const* GetComponent() const;
+
+        template <typename ComponentStruct>
         void SetComponent(const ComponentStruct &data);
     };
 
@@ -73,6 +76,11 @@ namespace zfw
 
     void EntityHandle::Destroy() const {
         world->DestroyEntity(entityId);
+    }
+
+    template <typename ComponentStruct>
+    ComponentStruct const* EntityHandle::GetComponent() const {
+        return static_cast<ComponentStruct*>(world->GetEntityComponent(entityId, GetComponentType<ComponentStruct>()));
     }
 
     template <typename ComponentStruct>
