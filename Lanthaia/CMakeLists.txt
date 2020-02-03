@@ -36,6 +36,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src
 )
 
+if (EMSCRIPTEN AND ${CMAKE_VERSION} VERSION_LESS "3.13.0")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s FORCE_FILESYSTEM=1 -s USE_FREETYPE=1 -s USE_SDL=2 -s USE_WEBGL2=1")
+endif()
+
 # Copy assets
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/assets" $<TARGET_FILE_DIR:${PROJECT_NAME}>)

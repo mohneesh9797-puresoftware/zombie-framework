@@ -50,7 +50,7 @@ endif()
 
 add_library(${PROJECT_NAME} STATIC ${sources})
 add_dependencies(${PROJECT_NAME} zombie_framework)
-target_link_libraries(${PROJECT_NAME} zombie_framework)
+target_link_libraries(${PROJECT_NAME} PUBLIC zombie_framework)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC RENDERING_KIT_STATIC=1)
 target_compile_definitions(${PROJECT_NAME} PUBLIC STX_NO_STD_VARIANT=1)
@@ -70,9 +70,16 @@ endif()
 
 # OpenGL
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} opengl32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE opengl32)
+elseif(EMSCRIPTEN)
+    target_compile_options(${PROJECT_NAME} PRIVATE "SHELL:-s USE_WEBGL2=1")
+
+    # if your CMake is old, you will have to add this to CMAKE_EXE_LINKER_FLAGS in the top-level project
+    if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.13.0") 
+        target_link_options(${PROJECT_NAME} PUBLIC "SHELL:-s USE_WEBGL2=1")
+    endif()
 else()
-    target_link_libraries(${PROJECT_NAME} GL)
+    target_link_libraries(${PROJECT_NAME} PRIVATE GL)
 endif()
 
 # SDL2
@@ -108,7 +115,14 @@ if (NOT EMSCRIPTEN)
     find_package(SDL2 REQUIRED)
 
     target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE "${SDL2_INCLUDE_DIR}")
-    target_link_libraries(${PROJECT_NAME} "${SDL2_LIBRARY}")
+    target_link_libraries(${PROJECT_NAME} PRIVATE "${SDL2_LIBRARY}")
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE "SHELL:-s USE_SDL=2")
+
+    # if your CMake is old, you will have to add this to CMAKE_EXE_LINKER_FLAGS in the top-level project
+    if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.13.0") 
+        target_link_options(${PROJECT_NAME} PUBLIC "SHELL:-s USE_SDL=2")
+    endif()
 endif()
 
 # tinygltf

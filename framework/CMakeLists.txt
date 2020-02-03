@@ -201,7 +201,8 @@ endif()
 if (WITH_BLEB)
     add_dependencies(${library} bleb)
     target_compile_definitions(${library} PUBLIC -DZOMBIE_WITH_BLEB=1)
-    target_link_libraries(${library} bleb)
+    # ntile & StudioKit rely on bleb being public
+    target_link_libraries(${library} PUBLIC bleb)
 endif()
 
 # freetype2
@@ -210,22 +211,26 @@ if (WITH_ZTYPE AND NOT EMSCRIPTEN)
 
     if (Freetype_FOUND)
         target_include_directories(${library} PRIVATE ${FREETYPE_INCLUDE_DIRS})
-        target_link_libraries(${library} ${FREETYPE_LIBRARIES})
+        target_link_libraries(${library} PRIVATE ${FREETYPE_LIBRARIES})
     else()
         add_subdirectory(dependencies/freetype2)
         add_dependencies(${library} freetype)
 
         target_include_directories(${library} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/freetype2/include)
-        target_link_libraries(${library} freetype)
+        target_link_libraries(${library} PRIVATE freetype)
     endif()
 elseif (WITH_ZTYPE AND EMSCRIPTEN)
     # use pre-compiled Freetype
     target_compile_options(${library} PRIVATE "SHELL:-s USE_FREETYPE=1")
-    target_link_options(${library} PUBLIC "SHELL:-s USE_FREETYPE=1")
+
+    # if your CMake is old, you will have to add this to CMAKE_EXE_LINKER_FLAGS in the top-level project
+    if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.13.0")
+        target_link_options(${library} PUBLIC "SHELL:-s USE_FREETYPE=1")
+    endif()
 endif()
 
 # glm
-target_link_libraries(${library} glm::glm)
+target_link_libraries(${library} PUBLIC glm::glm)
 
 # Restore glm behavior from before v0.9.9.x (default initialization) until the entire codebase is updated
 target_compile_definitions(${library} PUBLIC GLM_FORCE_CTOR_INIT)
@@ -236,14 +241,14 @@ if (WITH_JPEG)
 
     if (JPEG_FOUND)
         target_include_directories(${library} PRIVATE ${JPEG_INCLUDE_DIR})
-        target_link_libraries(${library} ${JPEG_LIBRARIES})
+        target_link_libraries(${library} PRIVATE ${JPEG_LIBRARIES})
     else()
         add_subdirectory(dependencies/libjpeg ${CMAKE_CURRENT_BINARY_DIR}/build-libjpeg)
         add_dependencies(${library} jpeg)
 
         target_include_directories(${library} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/libjpeg)
         target_include_directories(${library} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/build-libjpeg)
-        target_link_libraries(${library} jpeg)
+        target_link_libraries(${library} PRIVATE jpeg)
     endif()
 
     target_compile_definitions(${library} PUBLIC -DZOMBIE_WITH_JPEG=1)
@@ -251,11 +256,11 @@ endif()
 
 # libcfx2
 add_dependencies(${library} cfx2)
-target_link_libraries(${library} cfx2)
+target_link_libraries(${library} PUBLIC cfx2) # public because may be included by littl
 
 # littl
 add_dependencies(${library} littl)
-target_link_libraries(${library} littl)
+target_link_libraries(${library} PUBLIC littl)
 
 # lodepng
 if (WITH_LODEPNG)
@@ -269,14 +274,14 @@ if (ZOMBIE_WITH_LUA)
     # Lua's include directories need to be public, because we expose lua_State* for template-based binding
     if (LUA_FOUND)
         target_include_directories(${PROJECT_NAME} PUBLIC SYSTEM ${LUA_INCLUDE_DIR})
-        target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES})
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
     else()
         add_subdirectory(dependencies/lua ${CMAKE_CURRENT_BINARY_DIR}/build-lua)
         target_include_directories(${PROJECT_NAME} PUBLIC
                 ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/lua/src
                 ${CMAKE_CURRENT_BINARY_DIR}/build-lua
                 )
-        target_link_libraries(${PROJECT_NAME} liblua)
+        target_link_libraries(${PROJECT_NAME} PRIVATE liblua)
     endif()
 
     target_compile_definitions(${library} PUBLIC -DZOMBIE_WITH_LUA=1)
@@ -285,12 +290,16 @@ endif()
 # Other stuff
 if (EMSCRIPTEN)
     target_compile_options(${library} PRIVATE "SHELL:-s FORCE_FILESYSTEM=1")
-    target_link_options(${library} PUBLIC "SHELL:-s FORCE_FILESYSTEM=1")
+
+    # if your CMake is old, you will have to add this to CMAKE_EXE_LINKER_FLAGS in the top-level project
+    if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.13.0") 
+        target_link_options(${library} PUBLIC "SHELL:-s FORCE_FILESYSTEM=1")
+    endif()
 endif()
 
 if (UNIX)
-    target_link_libraries(${library} dl)
-    target_link_libraries(${library} pthread)
+    target_link_libraries(${library} PRIVATE dl)
+    target_link_libraries(${library} PRIVATE pthread)
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
