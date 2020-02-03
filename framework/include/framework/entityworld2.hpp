@@ -57,6 +57,14 @@ namespace zfw
                 return {this, this->CreateEntityId()};
             }
 
+            // TODO: eventually investigate if it is as simple as this
+            // Use cases:
+            //  - deserialization of saved game state
+            //  - receiving multiplayer entities
+            EntityHandle CreateEntityWithId(EntityId id) {
+                return {this, id};
+            }
+
             template <typename ComponentStruct>
             ComponentStruct* GetEntityComponent(EntityId id) {
                 return static_cast<ComponentStruct*>(this->GetEntityComponent(id, GetComponentType<ComponentStruct>()));
