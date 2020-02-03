@@ -47,7 +47,7 @@ namespace zfw
              */
             virtual void* SetEntityComponent(EntityId id, IComponentType &type, const void *data) = 0;
 
-            virtual void IterateEntitiesByComponent(IComponentType &type, std::function<void(intptr_t entityId, void* component_data)> callback) = 0;
+            virtual void IterateEntitiesByComponent(IComponentType &type, std::function<void(EntityId entityId, void* component_data)> callback) = 0;
 
             EntityHandle CreateEntity() {
                 return {this, this->CreateEntityId()};
