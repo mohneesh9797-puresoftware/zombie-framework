@@ -21,13 +21,15 @@ jobs:
   include:
     - name: minimal
       script: |
-        cmake examples/minimal && make minimal
-        ./minimal
-    - name: minimal arm64                
-      arch: arm64                                                                                  
+        cmake -DCMAKE_BUILD_TYPE=Release examples/minimal
+        cmake --build . --config Release
+        ctest -C Release -V
+    - name: minimal arm64
+      arch: arm64
       script: |
-        cmake examples/minimal && make minimal                                                     
-        ./minimal       
+        cmake -DCMAKE_BUILD_TYPE=Release examples/minimal
+        cmake --build . --config Release
+        ctest -C Release -V
     - name: examples/rendering-kit-demo
       script: cmake examples/rendering-kit-demo && make rendering-kit-demo
     - name: examples/Container3DScene
