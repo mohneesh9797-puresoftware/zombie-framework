@@ -190,7 +190,6 @@ endif()
 
 add_library(${library} ${sources})
 
-target_compile_definitions(${library} PUBLIC $<$<CONFIG:DEBUG>:ZOMBIE_DEBUG>)
 target_compile_features(${library} PUBLIC cxx_std_14)
 
 if (ZOMBIE_API_VERSION)
