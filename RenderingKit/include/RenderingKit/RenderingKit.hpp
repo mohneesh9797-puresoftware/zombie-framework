@@ -7,6 +7,8 @@
  *  Copyright (c) 2013, 2014, 2016 Minexew Games
  */
 
+#include "Fwd.hpp"
+
 #include <framework/datamodel.hpp>
 #include <framework/modulehandler.hpp>
 #include <framework/resource.hpp>
@@ -39,20 +41,6 @@ namespace RenderingKit
 
     using std::shared_ptr;
     using std::unique_ptr;
-
-    class Paragraph;
-    class IFontFace;
-    class IFontQuadSink;
-    class IGeomBuffer;
-    class IGeomChunk;
-    class IMaterial;
-    class IModel;
-    class IRKUIThemer;
-    class IShader;
-    class ITexture;
-    class ITextureAtlas;
-    class IVertexFormat;
-    class IWorldGeometry;
 
     enum RKAttribDataType_t
     {
