@@ -65,28 +65,27 @@ namespace zfw
                 return &pm->pixelData[0];
             }
 
-            // API TODO: take references instead of pointers
             template <class Pixmap_t>
-            static bool LoadFromFile(IEngine* sys, Pixmap_t* pm, const char* fileName)
+            static bool LoadFromFile(IEngine& sys, Pixmap_t& pm, const char* fileName)
             {
-                unique_ptr<InputStream> stream(sys->OpenInput(fileName));
+                unique_ptr<InputStream> stream(sys.OpenInput(fileName));
 
                 if (!stream)
                     return false;
 
-                return Pixmap::LoadFromStream(sys, pm, stream.get(), fileName);
+                return Pixmap::LoadFromStream(sys, pm, *stream, fileName);
             }
 
             template <class Pixmap_t>
-            static bool LoadFromStream(IEngine* sys, Pixmap_t* pm, InputStream* stream, const char* fileNameOrNull)
+            static bool LoadFromStream(IEngine& sys, Pixmap_t& pm, InputStream& stream, const char* fileNameOrNull)
             {
                 // FIXME: Error description on error
 
-                auto imch = sys->GetMediaCodecHandler(true);
+                auto imch = sys.GetMediaCodecHandler(true);
 
                 uint8_t signature[8];
 
-                if (!stream->read(signature, li_lengthof(signature)) || !stream->setPos(0))
+                if (!stream.read(signature, li_lengthof(signature)) || !stream.setPos(0))
                     return false;
 
                 auto decoder = imch->GetDecoderByFileSignature<IPixmapDecoder>(signature, li_lengthof(signature),
@@ -95,7 +94,21 @@ namespace zfw
                 if (!decoder)
                     return false;
 
-                return decoder->DecodePixmap(pm, stream, fileNameOrNull) == IDecoder::kOK;
+                return decoder->DecodePixmap(&pm, &stream, fileNameOrNull) == IDecoder::kOK;
             }
+
+#if ZOMBIE_API_VERSION < 202001
+            template <class Pixmap_t>
+            static bool LoadFromFile(IEngine* sys, Pixmap_t* pm, const char* fileName)
+            {
+                return LoadFromFile(*sys, *pm, fileName);
+            }
+
+            template <class Pixmap_t>
+            static bool LoadFromStream(IEngine* sys, Pixmap_t* pm, InputStream* stream, const char* fileNameOrNull)
+            {
+                return LoadFromStream(*sys, *pm, *stream, fileNameOrNull);
+            }
+#endif
     };
 }

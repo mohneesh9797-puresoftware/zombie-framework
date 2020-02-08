@@ -1,6 +1,7 @@
 2020.01:
 
 	- framework: by default add working directory as a read-only filesystem (kSysNoDefaultFileSystem to override)
+	- framework: changed signature of Pixmap::LoadFromFile, Pixmap::LoadFromStream (references in place of non-nullable pointers)
 	- RenderingKit: more straightforward initialization
 
 2019.01
