@@ -22,6 +22,9 @@ set(sources
         dependencies/PubSub/PubSub.hpp
         dependencies/PubSub/PubSub.cpp
 
+        include/Base/char8_t.hpp
+        include/Base/u8string.hpp
+        include/Base/u8string_view.hpp
         include/Data/HeightMap.hpp
         include/Data/Matrix2D.hpp
         include/framework/abstractentity.hpp
