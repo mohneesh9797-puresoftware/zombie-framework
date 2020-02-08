@@ -21,6 +21,8 @@ set(sources
         dependencies/PubSub/PubSub.hpp
         dependencies/PubSub/PubSub.cpp
 
+        include/Data/HeightMap.hpp
+        include/Data/Matrix2D.hpp
         include/framework/abstractentity.hpp
         include/framework/app.hpp
         include/framework/components/model3d.hpp
@@ -84,6 +86,7 @@ set(sources
 
         include/ztype/ztype.hpp
 
+        src/DataObsession/HeightMap.cpp
         src/framework/asprintf.cpp
         src/framework/broadcasthandler.cpp
         src/framework/codecs/bmpcodec.cpp
