@@ -12,6 +12,14 @@ namespace zfw
             virtual const char* GetName() = 0;
     };
 
+    class ResourceParamSet
+    {
+    public:
+        const char* AsParamsString() const { return params; }
+
+        const char* params;
+    };
+
     /**
      * # Implementing an IResource2
 

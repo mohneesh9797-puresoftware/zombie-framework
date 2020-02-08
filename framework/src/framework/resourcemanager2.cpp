@@ -40,6 +40,8 @@ namespace zfw
             // see GetResourceFlag_t for possible flags
             virtual IResource2* GetResource(const char* recipe, const TypeID& resourceClass, int flags) final override;
 
+            void RegisterResourceFactory(TypeID resourceClass, ResourceFactoryFunction factory) override;
+
             virtual bool RegisterResourceProvider(const TypeID* resourceClasses, size_t numResourceClasses,
                     IResourceProvider2* provider) final override;
 
@@ -80,6 +82,7 @@ namespace zfw
             ResourceSection_t* currentSection;
 
             List<ResourceSectionStorage_t, size_t, Allocator<ResourceSectionStorage_t>, li::ArrayOptions::noBoundsChecking> storages;
+            std::unordered_map<TypeID, ResourceFactoryFunction> factories;
             std::unordered_map<TypeID, IResourceProvider2*> providers;
     };
 
@@ -185,6 +188,12 @@ namespace zfw
 
     IResource2* ResourceManager2::p_CreateResource(const char* recipe, const TypeID& resourceClass, int flags)
     {
+        auto factory = factories.find(resourceClass);
+
+        if (factory != factories.end()) {
+            return factory->second(ResourceParamSet { recipe }).release();
+        }
+
         auto provider = providers.find(resourceClass);
         
         if (provider == providers.end())
@@ -255,12 +264,20 @@ namespace zfw
         return true;
     }
 
+    void ResourceManager2::RegisterResourceFactory(TypeID resourceClass, ResourceFactoryFunction factory) {
+        if (factories.count(resourceClass) > 0 || providers.count(resourceClass) > 0) {
+            return; // TODO: how to handle well?
+        }
+
+        factories[resourceClass] = factory;
+    }
+
     bool ResourceManager2::RegisterResourceProvider(const TypeID* resourceClasses, size_t numResourceClasses,
             IResourceProvider2* provider)
     {
         for (size_t i = 0; i < numResourceClasses; i++)
         {
-            if (providers.count(resourceClasses[i]) > 0)
+            if (factories.count(resourceClasses[i]) > 0 || providers.count(resourceClasses[i]) > 0)
                 return ErrorBuffer::SetError3(EX_INVALID_ARGUMENT, 2,
                         "desc", (const char*) sprintf_t<63>("Resource class provider collision (resource class 0x%X)", resourceClasses[i]),
                         "function", li_functionName

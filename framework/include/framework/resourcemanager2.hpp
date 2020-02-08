@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Base/u8string.hpp>
+
 #include <framework/base.hpp>
 #include <framework/resource.hpp>
 
@@ -7,11 +9,14 @@
 #include <framework/utility/params.hpp>
 
 #include <cstddef>
+#include <functional>
 
 // TODO: should it be possible to register multiple providers for one resource type?
 
 namespace zfw
 {
+    using Obs::u8string;
+
     struct ResourceSection_t
     {
         const char* name;
@@ -29,6 +34,8 @@ namespace zfw
                 kResourcePrivate = 4,
             };
 
+            using ResourceFactoryFunction = std::function<std::unique_ptr<IResource2>(const ResourceParamSet& params)>;
+
             virtual ~IResourceManager2() {}
 
             virtual IResource2::State_t GetTargetState() = 0;
@@ -38,8 +45,9 @@ namespace zfw
             // TODO API: how about a set of boolean arguments instead of an untyped bitfield?
             virtual IResource2* GetResource(const char* recipe, const TypeID& resourceClass, int flags) = 0;
 
+            virtual void RegisterResourceFactory(TypeID resourceClass, ResourceFactoryFunction factory) = 0;
+
             // provider must stay alive until unregistered
-            // TODO API: why don't we allow registering resource classes directly without this silly proxy?
             virtual bool RegisterResourceProvider(const TypeID* resourceClasses, size_t numResourceClasses,
                     IResourceProvider2* provider) = 0;
 
@@ -69,6 +77,14 @@ namespace zfw
                             nullptr;
 
                 return GetResource<C>(params, flags);
+            }
+
+            template <class C>
+            void RegisterResourceClass()
+            {
+                RegisterResourceFactory(typeID<C>(), [](ResourceParamSet const& params) {
+                    return std::make_unique<C>(params);
+                });
             }
 
             template <class C> void Resource(C** res_out, const char* recipe, int flags = kResourceRequired)
