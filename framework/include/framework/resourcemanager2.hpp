@@ -62,6 +62,8 @@ namespace zfw
             virtual bool MakeAllResourcesState(IResource2::State_t state, bool propagateError) = 0;
             virtual bool MakeResourcesInSectionState(ResourceSection_t* sect, IResource2::State_t state, bool propagateError) = 0;
 
+            virtual IEngine& GetEngine() = 0;
+
             template <class C> C* GetResource(const char* recipe, int flags)
             {
                 return static_cast<C*>(GetResource(recipe, typeID<C>(), flags));

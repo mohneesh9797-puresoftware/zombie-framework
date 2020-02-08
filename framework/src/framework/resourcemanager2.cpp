@@ -55,6 +55,8 @@ namespace zfw
             virtual bool MakeAllResourcesState(IResource2::State_t state, bool propagateError) final override;
             virtual bool MakeResourcesInSectionState(ResourceSection_t* sect, IResource2::State_t state, bool propagateError) final override;
 
+            IEngine& GetEngine() override { return *sys; }
+
         private:
             struct ResourceSectionStorage_t
             {
