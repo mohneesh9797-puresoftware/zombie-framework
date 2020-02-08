@@ -9,6 +9,8 @@
 
 #include "Fwd.hpp"
 
+#include <Base/u8string_view.hpp>
+
 #include <framework/datamodel.hpp>
 #include <framework/modulehandler.hpp>
 #include <framework/resource.hpp>
@@ -29,6 +31,8 @@
 
 namespace RenderingKit
 {
+    using Obs::u8string_view;
+
     using zfw::Byte2;
     using zfw::Byte3;
     using zfw::Byte4;
@@ -41,9 +45,6 @@ namespace RenderingKit
 
     using std::shared_ptr;
     using std::unique_ptr;
-
-    using char8_t = char;
-    using u8string_view = std::basic_string_view<char8_t>;
 
     enum RKAttribDataType_t
     {
