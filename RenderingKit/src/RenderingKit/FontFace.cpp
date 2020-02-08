@@ -175,10 +175,12 @@ namespace RenderingKit
             virtual unsigned int GetLineHeight() { return metrics.lineheight; }
             virtual void SetQuadSink(IFontQuadSink* sink) { quadSink = sink; }
 
+            virtual void LayoutParagraph(Paragraph* p, u8string_view text, Byte4 colour, int layoutFlags) override;
             virtual void LayoutParagraph(Paragraph* p, const char* textUtf8, Byte4 colour, int layoutFlags) override;
             virtual Int2 MeasureParagraph(Paragraph* p) override;
             virtual void ReleaseParagraph(Paragraph* p) override;
 
+            virtual Int2 MeasureText(u8string_view text) override;
             virtual Int2 MeasureText(const char* textUtf8) override;
 
             virtual bool GetCharNear(Paragraph* p, const Float3& posInPS, ptrdiff_t* followingCharIndex_out, Float3* followingCharPosInPS_out) override;
@@ -188,6 +190,7 @@ namespace RenderingKit
 
             virtual void DrawParagraph(Paragraph* p, const Float3& areaPos, const Float2& areaSize) override;
             virtual void DrawParagraph(Paragraph* p, const Float3& areaPos, const Float2& areaSize, Byte4 colour) override;
+            virtual void DrawText(u8string_view text, Byte4 colour, int layoutFlags, const Float3& areaPos, const Float2& areaSize) override;
             virtual void DrawText(const char* textUtf8, Byte4 colour, int layoutFlags, const Float3& areaPos, const Float2& areaSize) override;
 
             virtual int OnFontQuad(const Float3& pos, const Float2& size, const Float2 uv[2], Byte4 colour) override;
@@ -423,6 +426,12 @@ namespace RenderingKit
         //rm->CheckErrors(li_functionName);
     }
 
+    void GLFontFace::DrawText(u8string_view text, Byte4 colour, int layoutFlags, const Float3& areaPos, const Float2& areaSize)
+    {
+        LayoutParagraph(&sharedP, text, colour, layoutFlags);
+        return DrawParagraph(&sharedP, areaPos, areaSize);
+    }
+
     void GLFontFace::DrawText(const char* textUtf8, Byte4 colour, int layoutFlags, const Float3& areaPos, const Float2& areaSize)
     {
         LayoutParagraph(&sharedP, textUtf8, colour, layoutFlags);
@@ -556,7 +565,7 @@ namespace RenderingKit
         return true;
     }
 
-    void GLFontFace::LayoutParagraph(Paragraph* p, const char* textUtf8, Byte4 colour, int layoutFlags)
+    void GLFontFace::LayoutParagraph(Paragraph* p, u8string_view text, Byte4 colour, int layoutFlags)
     {
         int line_width = 0, line_height = 0, max_width = 0, total_height = 0;
         size_t unitsUsed = 0;
@@ -576,14 +585,18 @@ namespace RenderingKit
         unitsUsed += 2;
 
         Unicode::Char cp;
-        for ( ; textUtf8 != nullptr; )
+        const char* textUtf8 = &text[0];
+        size_t bytesLeft = text.size();
+
+        while ( bytesLeft > 0 )
         {
-            unsigned int c = Utf8::decode(cp, textUtf8, 4);
+            unsigned int c = Utf8::decode(cp, textUtf8, bytesLeft);
 
             if (c == 0 || cp == Unicode::invalidChar || cp == 0)
                 break;
 
             textUtf8 += c;
+            bytesLeft -= c;
 
             if (cp == '\r')
                 continue;
@@ -694,9 +707,20 @@ namespace RenderingKit
         p->alignFlags = layoutFlags;
     }
 
+    void GLFontFace::LayoutParagraph(Paragraph* p, const char* textUtf8, Byte4 colour, int layoutFlags)
+    {
+        LayoutParagraph(p, u8string_view {textUtf8}, colour, layoutFlags);
+    }
+
     Int2 GLFontFace::MeasureParagraph(Paragraph* p)
     {
         return Int2(p->maxWidth, p->numLines * metrics.lineheight);
+    }
+
+    Int2 GLFontFace::MeasureText(u8string_view text)
+    {
+        LayoutParagraph(&sharedP, text, RGBA_WHITE, 0);
+        return MeasureParagraph(&sharedP);
     }
 
     Int2 GLFontFace::MeasureText(const char* textUtf8)

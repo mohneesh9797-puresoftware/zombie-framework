@@ -42,6 +42,9 @@ namespace RenderingKit
     using std::shared_ptr;
     using std::unique_ptr;
 
+    using char8_t = char;
+    using u8string_view = std::basic_string_view<char8_t>;
+
     enum RKAttribDataType_t
     {
         RK_ATTRIB_UBYTE,
@@ -302,10 +305,12 @@ namespace RenderingKit
             virtual void SetQuadSink(IFontQuadSink* sink) = 0;
 
             //const char* styleParams
+            virtual void LayoutParagraph(Paragraph* p, u8string_view text, Byte4 colour, int layoutFlags) = 0;
             virtual void LayoutParagraph(Paragraph* p, const char* textUtf8, Byte4 colour, int layoutFlags) = 0;
             virtual Int2 MeasureParagraph(Paragraph* p) = 0;
             virtual void ReleaseParagraph(Paragraph* p) = 0;
 
+            virtual Int2 MeasureText(u8string_view text) = 0;
             virtual Int2 MeasureText(const char* textUtf8) = 0;
 
             virtual bool GetCharNear(Paragraph* p, const Float3& posInPS, ptrdiff_t* followingCharIndex_out, Float3* followingCharPosInPS_out) = 0;
@@ -318,6 +323,7 @@ namespace RenderingKit
 
             virtual void DrawParagraph(Paragraph* p, const Float3& areaPos, const Float2& areaSize) = 0;
             virtual void DrawParagraph(Paragraph* p, const Float3& areaPos, const Float2& areaSize, Byte4 colour) = 0;
+            virtual void DrawText(u8string_view text, Byte4 colour, int layoutFlags, const Float3& areaPos, const Float2& areaSize) = 0;
             virtual void DrawText(const char* textUtf8, Byte4 colour, int layoutFlags, const Float3& areaPos, const Float2& areaSize) = 0;
 
             /*virtual void SetShadowProperties(Int2 offset, Byte4 colour) = 0;
