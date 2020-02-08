@@ -13,8 +13,8 @@ static float filter(float a) {
     return a < 0.5f ? 2 * a * a : 1.0f - 2 * (1.0f - a) * (1.0f - a);
 }
 
-HeightMap::HeightMap(zfw::Pixmap_t const& pm, float zscale) : heights(pm.info.size) {
-    const float factor = (zscale / 255.0f);
+HeightMap::HeightMap(zfw::Pixmap_t const& pm) : heights(pm.info.size) {
+    constexpr float factor = (1.0f / 255.0f);
 
     zombie_assert(pm.info.format == zfw::PixmapFormat_t::BGR8 ||
                   pm.info.format == zfw::PixmapFormat_t::RGB8);

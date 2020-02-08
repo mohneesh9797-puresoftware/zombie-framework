@@ -80,7 +80,9 @@ set(sources
         include/framework/varsystem.hpp
         include/framework/videocapture.hpp
         include/framework/videohandler.hpp
+        include/Res/Fwd.hpp
         include/Res/Resource.hpp
+        include/Res/ResourceHeightMap.hpp
         include/Res/ResourceManager.hpp
 
         include/gameui/dialogs.hpp
@@ -126,6 +128,7 @@ set(sources
         src/framework/utility/vkey.cpp
         src/framework/varsystem.cpp
         src/framework/vkeyreflection.cpp
+        src/ResObsession/ResourceHeightMap.cpp
 
         src/gameui/button.cpp
         src/gameui/checkbox.cpp

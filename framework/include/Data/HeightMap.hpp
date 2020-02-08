@@ -12,7 +12,7 @@ namespace Obs::Data {
 
 class HeightMap {
 public:
-    HeightMap(zfw::Pixmap_t const& pm, float zscale);
+    HeightMap(zfw::Pixmap_t const& pm);
 
     glm::ivec2 GetResolution() const { return heights.size; }
 
