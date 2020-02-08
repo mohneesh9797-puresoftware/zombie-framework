@@ -297,6 +297,9 @@ namespace RenderingKit
             return false;
         }
 
+        // TODO: compute animation lengths
+        // for each animation, iterate over its samplers, and look at the maximum value in the input (=time) accessor
+
         return true;
     }
 
