@@ -27,6 +27,7 @@ set(sources
         include/Base/u8string_view.hpp
         include/Data/HeightMap.hpp
         include/Data/Matrix2D.hpp
+        include/Ecs/TerrainHeightMap.hpp
         include/framework/abstractentity.hpp
         include/framework/app.hpp
         include/framework/components/model3d.hpp
