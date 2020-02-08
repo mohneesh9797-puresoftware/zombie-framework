@@ -79,6 +79,8 @@ set(sources
         include/framework/varsystem.hpp
         include/framework/videocapture.hpp
         include/framework/videohandler.hpp
+        include/Res/Resource.hpp
+        include/Res/ResourceManager.hpp
 
         include/gameui/dialogs.hpp
         include/gameui/gameui.hpp
