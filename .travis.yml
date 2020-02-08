@@ -8,15 +8,6 @@ addons:
 os: linux
 compiler: gcc
 
-before_install: |
-  cd
-  git -C emsdk pull || git clone https://github.com/emscripten-core/emsdk.git
-  cd emsdk
-  ./emsdk install latest
-  ./emsdk activate latest
-  source ./emsdk_env.sh
-  cd $TRAVIS_BUILD_DIR
-
 jobs:
   include:
     - name: minimal
@@ -43,7 +34,9 @@ jobs:
     - name: Lanthaia
       script: cmake Lanthaia && make Lanthaia
     - name: Lanthaia WASM
-      script: python3 disttool-web.py Lanthaia Lanthaia
+      script: |
+        source ./tools/update-emscripten.sh
+        python3 disttool-web.py Lanthaia Lanthaia
     - name: ntile
       script: cmake ntile && make ntile
     - name: tools/mapcompiler
