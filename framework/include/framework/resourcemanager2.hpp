@@ -70,6 +70,12 @@ namespace zfw
             }
 
             template <class C>
+            C* GetResourceByPath(u8string normpath, int flags)
+            {
+                return GetResourceByPath<C>(normpath.c_str(), flags);
+            }
+
+            template <class C>
             C* GetResourceByPath(const char* normpath, int flags)
             {
                 char params[4096];
