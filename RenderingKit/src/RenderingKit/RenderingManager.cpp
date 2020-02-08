@@ -511,7 +511,7 @@ namespace RenderingKit
 
             Pixmap_t pm;
 
-			if (!Pixmap::LoadFromFile(rk->GetEngine(), &pm, path))
+			if (!Pixmap::LoadFromFile(*rk->GetEngine(), pm, path))
                 return nullptr;
 
             auto texture = p_CreateTexture(eb, rk, this, path);

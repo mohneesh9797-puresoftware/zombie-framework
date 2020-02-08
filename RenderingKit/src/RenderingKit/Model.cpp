@@ -337,7 +337,7 @@ namespace RenderingKit
         Pixmap_t pm;
         ArrayIOStream ios(bytes, size);         // TODO: SpanIOStream!
 
-        if (!Pixmap::LoadFromStream(self.engine, &pm, &ios, nullptr)) {
+        if (!Pixmap::LoadFromStream(*self.engine, pm, ios, nullptr)) {
             // TODO: propagate error
             if (err) {
                 (*err) += "Unknown image format.\n";
