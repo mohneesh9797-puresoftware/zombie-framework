@@ -18,21 +18,11 @@ namespace Client {
 using Obs::Gfx::RenderingSystem;
 using std::unique_ptr;
 
-//struct Player;
-
-//    class Inventory;
 class OrderedListNode;
 class PickingListener;
 class Scripting;
 class Sector;
 class WorldSession;
-
-//    struct Binding
-//    {
-//        //int type;
-//        unsigned short key;
-//        String chat;
-//    };
 
 class GameScene : public zfw::IScene {
 public:
@@ -77,13 +67,13 @@ private:
 
     // Controls
     zfw::KeyTracker ks;
-//    bool left, right, up, down, zin, zout;
+    //    bool left, right, up, down, zin, zout;
     //    Array<unsigned short> keys;
     //    List<Binding> bindings;
 
     // Movement
-//    bool hasMoved;
-//    float runSpeed;
+    //    bool hasMoved;
+    //    float runSpeed;
 
     // Chat
     unsigned maxChatLength = 666;
@@ -110,9 +100,9 @@ private:
     bool devMode = true;
     //        String pickingMatch;
 
-        zfw::IEngine& engine;
-        zfw::MessageQueue& eventQueue;
-        RenderingSystem& r;
+    zfw::IEngine& engine;
+    zfw::MessageQueue& eventQueue;
+    RenderingSystem& r;
 };
 
 }

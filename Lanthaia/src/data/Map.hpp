@@ -25,7 +25,8 @@ public:
     Sector(zfw::IEngine& engine, zfw::IEntityWorld2& world, Map* map, unsigned sx, unsigned sy);
     ~Sector();
 
-    void addWorldObj(zfw::IEngine& engine, zfw::IEntityWorld2& world, const li::String& name, float x, float y, float z, float o);
+    void addWorldObj(
+        zfw::IEngine& engine, zfw::IEntityWorld2& world, const li::String& name, float x, float y, float z, float o);
     void save();
     void saveAs(const li::String& fileName);
 };
@@ -63,7 +64,6 @@ public:
     void removeReference(unsigned wmid);
 
 private:
-
 };
 
 }

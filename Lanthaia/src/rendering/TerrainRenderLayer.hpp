@@ -1,22 +1,26 @@
 #ifndef LANTHAIA_TERRAINRENDERLAYER_HPP
 #define LANTHAIA_TERRAINRENDERLAYER_HPP
 
+#include <Ecs/EntityView.hpp>
 #include <Ecs/TerrainHeightMap.hpp>
 #include <Gfx/RenderingSystem.hpp>
 
 namespace Client {
 
 using namespace Obs::Gfx;
+using Obs::Ecs::EntityViewWithCustomData;
 using Obs::Ecs::TerrainHeightMap;
 
-class TerrainRenderLayer: public zfw::IBroadcastSubscriber {
+class TerrainRenderLayer : public zfw::IBroadcastSubscriber {
 public:
-    TerrainRenderLayer(zfw::IBroadcastHandler& bh, zfw::IEngine& engine, zfw::IEntityWorld2& world, zfw::IResourceManager2& resMgr);
+    TerrainRenderLayer(
+        zfw::IBroadcastHandler& bh, zfw::IEngine& engine, zfw::IEntityWorld2& world, zfw::IResourceManager2& resMgr);
 
     void Render(RenderingContext const& ctx);
 
     // zfw::IBroadcastSubscriber
-    void OnComponentEvent(zfw::IEntityWorld2& world, zfw::EntityId entityId, zfw::IComponentType &type, void *data, zfw::ComponentEvent event) override;
+    void OnComponentEvent(zfw::IEntityWorld2& world, zfw::EntityId entityId, zfw::IComponentType& type, void* data,
+        zfw::ComponentEvent event) override;
     void OnMessageBroadcast(intptr_t type, const void* payload) override {}
 
 private:
@@ -26,8 +30,9 @@ private:
         std::unique_ptr<RenderingKit::IGeomChunk> gc;
     };
 
-    zfw::EntityViewWithCustomData<RenderableWorldMesh, TerrainHeightMap, zfw::Position> renderables;
-    void UpdateInPlace(zfw::IEntityWorld2& world, zfw::EntityId entityId, decltype(renderables)::References components, RenderableWorldMesh& mesh);
+    EntityViewWithCustomData<RenderableWorldMesh, TerrainHeightMap, zfw::Position> renderables;
+    void UpdateInPlace(zfw::IEntityWorld2& world, zfw::EntityId entityId, decltype(renderables)::References components,
+        RenderableWorldMesh& mesh);
 
     zfw::IEngine& engine;
     zfw::IEntityWorld2& world;

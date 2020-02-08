@@ -1,14 +1,13 @@
 #ifndef LANTHAIA_LOGINSYSTEM_HPP
 #define LANTHAIA_LOGINSYSTEM_HPP
 
+#include <PubSub.hpp>
 #include <framework/base.hpp>
 #include <framework/system.hpp>
-#include <PubSub.hpp>
 
 #include <littl/TcpSocket.hpp>
 
-namespace Client
-{
+namespace Client {
 
 struct LoginServerInfo {
     std::string realmName;
@@ -28,14 +27,17 @@ public:
         readyToLogin,
         serverClosed,
         error,
-//        registering,
+        //        registering,
         loggingIn,
         failed,
         loggedIn,
         enteringWorld,
     };
 
-    struct StateUpdate { State state; std::string message; };
+    struct StateUpdate {
+        State state;
+        std::string message;
+    };
 
     [[nodiscard]] LoginServerInfo GetServerInfo() const { return serverInfo; }
     [[nodiscard]] State GetState() const { return state; }

@@ -9,14 +9,14 @@
  * Scripting: ?
  */
 
-#include <Gfx/RenderingSystem.hpp>
 #include "TitleScene.hpp"
 
+#include <Gfx/RenderingSystem.hpp>
+#include <Res/ResourceHeightMap.hpp>
 #include <framework/app.hpp>
 #include <framework/engine.hpp>
 #include <framework/messagequeue.hpp>
 #include <framework/utility/errorbuffer.hpp>
-#include <Res/ResourceHeightMap.hpp>
 
 #if defined(_DEBUG) && defined(_MSC_VER)
 #include <crtdbg.h>

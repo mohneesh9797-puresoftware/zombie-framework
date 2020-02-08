@@ -1,18 +1,18 @@
 
 #include "Map.hpp"
 
+#include <Res/ResourceHeightMap.hpp>
 #include <framework/components/model3d.hpp>
 #include <framework/components/position.hpp>
 #include <framework/componenttype.hpp>
 #include <framework/engine.hpp>
 #include <framework/entityworld2.hpp>
-#include <Res/ResourceHeightMap.hpp>
 
 #include <littl/File.hpp>
 
-#include <glm/gtc/quaternion.hpp>
-#include <glm/ext/quaternion_trigonometric.hpp>
 #include <framework/resourcemanager2.hpp>
+#include <glm/ext/quaternion_trigonometric.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace Client {
 
@@ -75,7 +75,8 @@ Sector::~Sector() {
         map->removeReference(meshId);
 }
 
-void Sector::addWorldObj(zfw::IEngine& engine, zfw::IEntityWorld2& world, const li::String& name, float x, float y, float z, float o) {
+void Sector::addWorldObj(
+    zfw::IEngine& engine, zfw::IEntityWorld2& world, const li::String& name, float x, float y, float z, float o) {
     std::unique_ptr<li::InputStream> objectInfo { engine.OpenInput((li::String) "tolcl/world/" + name + ".obj") };
 
     if (!objectInfo || objectInfo->eof()) {
@@ -97,8 +98,8 @@ void Sector::addWorldObj(zfw::IEngine& engine, zfw::IEntityWorld2& world, const 
         engine.Printf(zfw::kLogDebugInfo, "addWorldObj %s at [%g %g %g] orientation %g", source.c_str(), x, y, z, o);
 
         auto entity = world.CreateEntity();
-        entity.SetComponent(zfw::Model3D {source.c_str()});
-        entity.SetComponent(zfw::Position {{x, y, z}, glm::angleAxis(o, vec3 {0.0f, 0.0f, 1.0f})});
+        entity.SetComponent(zfw::Model3D { source.c_str() });
+        entity.SetComponent(zfw::Position { { x, y, z }, glm::angleAxis(o, vec3 { 0.0f, 0.0f, 1.0f }) });
     }
 }
 
@@ -159,14 +160,15 @@ void Map::addReference(zfw::IEngine& engine, zfw::IEntityWorld2& world, unsigned
         terrain.scale.y = meshInfo->readLine().toFloat();
         terrain.scale.z = meshInfo->readLine().toFloat();
 
-        auto heightMap = globalResMgr->GetResourceByPath<ResourceHeightMap>(terrain.path.c_str(), zfw::IResourceManager2::kResourceRequired);
+        auto heightMap = globalResMgr->GetResourceByPath<ResourceHeightMap>(
+            terrain.path.c_str(), zfw::IResourceManager2::kResourceRequired);
         zombie_assert(heightMap);
 
         auto entity = world.CreateEntity();
         auto& ref_terrain = entity.SetComponent(std::move(terrain));
-        auto& ref_pos = entity.SetComponent(zfw::Position {{x, y, z}, glm::quat(0.0f, 0.0f, 0.0f, 1.0f)});
+        auto& ref_pos = entity.SetComponent(zfw::Position { { x, y, z }, glm::quat(0.0f, 0.0f, 0.0f, 1.0f) });
 
-        terrains.emplace_back(TerrainRef {wmid, 1, entity, ref_pos, ref_terrain, *heightMap});
+        terrains.emplace_back(TerrainRef { wmid, 1, entity, ref_pos, ref_terrain, *heightMap });
     }
 }
 
@@ -177,8 +179,11 @@ float Map::getHeightAt(float x, float y) {
         auto& heightMap = curr.heightMap.Get();
         auto scale = curr.terrain.scale;
 
-        if (x >= curr.pos.pos.x && y >= curr.pos.pos.y && x < curr.pos.pos.x + scale.x && y < curr.pos.pos.y + scale.y) {
-            return curr.pos.pos.z + heightMap.SampleBilinear({(x - curr.pos.pos.x) / scale.x, (y - curr.pos.pos.y) / scale.y}) * scale.z;
+        if (x >= curr.pos.pos.x && y >= curr.pos.pos.y && x < curr.pos.pos.x + scale.x
+            && y < curr.pos.pos.y + scale.y) {
+            return curr.pos.pos.z
+                + heightMap.SampleBilinear({ (x - curr.pos.pos.x) / scale.x, (y - curr.pos.pos.y) / scale.y })
+                * scale.z;
         }
     }
 
@@ -243,16 +248,16 @@ void Map::removeReference(unsigned wmid) {
     zombie_assert(false);
 
     // Code below is correct, but doesn't compile
-//    for (size_t i = 0; i < terrains.size(); i++)
-//        if (terrains[i].wmid == wmid) {
-//            if (--terrains[i].numRefs == 0) {
-//                // terrains[i].model->release();
-//                terrains[i].entity.Destroy();
-//                terrains.erase(terrains.begin() + i);
-//            }
-//
-//            return;
-//        }
+    //    for (size_t i = 0; i < terrains.size(); i++)
+    //        if (terrains[i].wmid == wmid) {
+    //            if (--terrains[i].numRefs == 0) {
+    //                // terrains[i].model->release();
+    //                terrains[i].entity.Destroy();
+    //                terrains.erase(terrains.begin() + i);
+    //            }
+    //
+    //            return;
+    //        }
 }
 
 void Map::shiftDown(int count) {

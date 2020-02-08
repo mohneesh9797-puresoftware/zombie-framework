@@ -1,7 +1,7 @@
 #include "GameScene.hpp"
-#include "rendering/TerrainRenderLayer.hpp"
-#include "rendering/Ms3dModelLayer.hpp"
 #include "WorldSession.hpp"
+#include "rendering/Ms3dModelLayer.hpp"
+#include "rendering/TerrainRenderLayer.hpp"
 
 #include <framework/components/model3d.hpp>
 #include <framework/components/position.hpp>
@@ -17,25 +17,41 @@ using std::make_unique;
 using std::move;
 
 void GameScene::DrawScene() {
-    while ( chat.getLength() > maxChatLength )
-            chat.remove( 0 );
+    while (chat.getLength() > maxChatLength)
+        chat.remove(0);
 
     r.DrawWorld(playerEntity);
 }
 
-    enum BindingIndices { moveUpKey, moveDownKey, moveLeftKey, moveRightKey, turnLeftKey, turnRightKey, chatKey, hideUiKey,
-        /****/ escKey, numEnterKey, toggleShadersKey, inventoryKey };
+enum BindingIndices {
+    moveUpKey,
+    moveDownKey,
+    moveLeftKey,
+    moveRightKey,
+    turnLeftKey,
+    turnRightKey,
+    chatKey,
+    hideUiKey,
+    /****/ escKey,
+    numEnterKey,
+    toggleShadersKey,
+    inventoryKey
+};
 
-    struct Binding { int id; const char* bindingName; Vkey_t vkey; };
+struct Binding {
+    int id;
+    const char* bindingName;
+    Vkey_t vkey;
+};
 
-    static constexpr Binding bindings[] = {
-            {moveUpKey, "move_up", Vkey_t {VKEY_KEY, -1, 'w', 0}},
-            {moveDownKey, "move_down", Vkey_t {VKEY_KEY, -1, 's', 0}},
-            {moveLeftKey, "move_left", Vkey_t {VKEY_KEY, -1, 'a', 0}},
-            {moveRightKey, "move_right", Vkey_t {VKEY_KEY, -1, 'd', 0}},
-            {turnLeftKey, "turn_left", Vkey_t {VKEY_KEY, -1, 'q', 0}},
-            {turnRightKey, "turn_right", Vkey_t {VKEY_KEY, -1, 'e', 0}},
-    };
+static constexpr Binding bindings[] = {
+    { moveUpKey, "move_up", Vkey_t { VKEY_KEY, -1, 'w', 0 } },
+    { moveDownKey, "move_down", Vkey_t { VKEY_KEY, -1, 's', 0 } },
+    { moveLeftKey, "move_left", Vkey_t { VKEY_KEY, -1, 'a', 0 } },
+    { moveRightKey, "move_right", Vkey_t { VKEY_KEY, -1, 'd', 0 } },
+    { turnLeftKey, "turn_left", Vkey_t { VKEY_KEY, -1, 'q', 0 } },
+    { turnRightKey, "turn_right", Vkey_t { VKEY_KEY, -1, 'e', 0 } },
+};
 
 // Test code
 //    static ILight* light;
@@ -43,134 +59,138 @@ void GameScene::DrawScene() {
 
 //    static int mouseX, mouseY;
 
-    // static void loadKeyBindings( Array<unsigned short>& values, const char* fileName, const char** bindingNames, unsigned count )
-    // {
-    //     cfx2_Node* doc = sg->loadCfx2Asset( fileName );
+// static void loadKeyBindings( Array<unsigned short>& values, const char* fileName, const char** bindingNames, unsigned
+// count )
+// {
+//     cfx2_Node* doc = sg->loadCfx2Asset( fileName );
 
-    //     for ( unsigned i = 0; i < count; i++ )
-    //         values[i] = sg->getGraphicsDriver()->getKey( cfx2_query_value( doc, ( String )"Controls/" + bindingNames[i] ) );
+//     for ( unsigned i = 0; i < count; i++ )
+//         values[i] = sg->getGraphicsDriver()->getKey( cfx2_query_value( doc, ( String )"Controls/" + bindingNames[i] )
+//         );
 
-    //     cfx2_release_node( doc );
-    // }
+//     cfx2_release_node( doc );
+// }
 
-    unique_ptr<Ms3dModelLayer> my_layer;
-    unique_ptr<TerrainRenderLayer> my_layer2;
-    extern zfw::IResourceManager2* globalResMgr;
+unique_ptr<Ms3dModelLayer> my_layer;
+unique_ptr<TerrainRenderLayer> my_layer2;
+extern zfw::IResourceManager2* globalResMgr;
 
-    GameScene::GameScene(PubSub::Broker& broker, zfw::IEngine& engine, zfw::MessageQueue& eventQueue, RenderingSystem& r,
-        unique_ptr<li::TcpSocket> socket)
-            : sub(broker, myPipe), ew(IEntityWorld2::Create(engine.GetBroadcastHandler())),
-            // ui( 0 ), overlay( 0 ), displayUi( false ),
-            ks(engine.GetVarSystem()),
-//            hasMoved( false ),
-            isTalking( false )
-            // viewDrag( false ), map( 0 ), renderProgram( 0 ), renderProgram2D( 0 )
-            , engine(engine), eventQueue(eventQueue), r(r)
-    {
-        for (auto const& binding : bindings) {
-            ks.Subscribe(binding.id, binding.bindingName, binding.vkey);
-        }
-
-        globalResMgr->SetTargetState(zfw::IResource2::REALIZED);
-        r.GetRm().RegisterResourceProviders(globalResMgr);
-
-        my_layer = std::make_unique<Ms3dModelLayer>(engine.GetBroadcastHandler(), engine, *ew, *globalResMgr, r.GetRm());
-        r.AddCustomLayer([](auto& ctx) { my_layer->Render(ctx); }, "ms3dModelLayer");
-
-        my_layer2 = std::make_unique<TerrainRenderLayer>(engine.GetBroadcastHandler(), engine, *ew, *globalResMgr);
-        r.AddCustomLayer([](auto& ctx) { my_layer2->Render(ctx); }, "terrainRenderLayer");
-
-//         loadKeyBindings( keys, "profile/default.tolcl/controls.cfx2", bindingNames, sizeof( bindingNames ) / sizeof( *bindingNames ) );
-//         auto gr = sg->getGraphicsDriver();
-//         keys[escKey] = gr->getKey( "Escape" );
-//         keys[numEnterKey] = gr->getKey( "Num Enter" );
-//         keys[toggleShadersKey] = gr->getKey( "G" );
-//         keys[inventoryKey] = gr->getKey( "I" );
-
-//         auto waterTex = globalResMgr->getTexture("tolcl/tex/0_water.png");
-//         IMaterial* mat = gr->createSolidMaterial( "water", Colour::white()/*, waterTex*/ ,nullptr );
-
-//         //IHeightMap* flat = sg->loa HeightMap( "tolcl/heightmap/flat.png", Vector<float>( 1000.0f, 1000.0f ), 0.0f );
-//         li::Object<IHeightMap> flat = sg->createHeightMap( {2, 2} );
-//         TerrainCreationInfo terrain {
-//                 flat,
-//                 Vector<float>( 50.0f, 50.0f, 0.0f ),
-//                 Vector<>( 0.0f, 0.0f, 0.0f ),
-//                 flat->getResolution(),
-//                 Vector2<>(),
-//                 Vector2<float>( 50.0f, 50.0f ),
-//                 true,
-//                 true,
-//                 false,
-//                 mat
-//         };
-// //        water = gr->createTerrain( "water", &terrain, 0 );
-//         PlaneCreationInfo pci {
-//                 {300.0f, 300.0f},
-//                 {0.0f, 0.0f},
-//                 {0.0f, 0.0f},
-//                 {50.0f, 50.0f},
-//                 false, true, mat
-//         };
-//         water = gr->createPlane("water", &pci);
-//         flat.release();
-
-//         IResourceManager* uiResMgr = Resources::getUiResMgr();
-//         uiFont = uiResMgr->getFont( "Radiance.EpicStyler.Assets/DefaultFont.ttf", 20, IFont::normal );
-//         chatFont = uiFont;
-
-// //        if ( shaders )
-// //        {
-// //            renderProgram = new Program( "sg_assets/shader/Default" );
-// //            renderProgram2D = new Program( "sg_assets/shader/2D" );
-// //
-// //            renderProgram->use();
-// //        }
-
-//         gr->setSceneAmbient( Colour( 0.2f, 0.2f, 0.2f ) );
-
-//         displayMode = gr->getWindowSize();
-//         maxChatLength = unsigned( ( displayMode.y - 100.0f ) / 25.0f );
-
-        session = new WorldSession( broker, move( socket ) );
-
-//         //light = new Light( Light_positional, Vector<float>( 300.0f, 300.f, 30.f ), Vector<float>(), Colour( 0.2f, 0.2f, 0.2f ), Colour( 1.0f, 1.0f, 1.0f ), 40.0f );
-//         light = gr->createDirectionalLight( Vector<float>( 0.0f, 0.0f, -1.0f ), Colour(), Colour( 0.5f, 0.5f, 0.5f ), 40.0f );
-
-// //        inventory = new Inventory();
-
-//         ui = sg->getGuiDriver()->createGui({}, Vector<>(displayMode.x, displayMode.y));
-
-// //        IPanel* mainPanel = ui->createPanel( Vector<>(displayMode.x / 2 + 40, displayMode.y - 48), {400, 48} );
-// //        GameUI::GraphicalButton* invButton = new GameUI::GraphicalButton( 8, 8, 32, 32, globalResMgr->getTexture( "tolcl/gfx/invbutton.png" ) );
-// //        invButton->setName( "inv_button" );
-// //        invButton->setOnPush( this );
-// //        mainPanel->add( invButton );
-// //        ui->add( mainPanel );
-
-// //        GameUI::ItemDrag* drag = new GameUI::ItemDrag( ui );
-// //        drag->setName( "item_drag" );
-// //        ui->add( drag );
-// //        ui->overlay( drag );
-
-//         up = down = left = right = zin = zout = false;
-
-
-//         // init scripting engine
-
-// //        scripting = new Scripting( this );
-// //        InputStream* autorun = sg->open( "autorun.misl" );
-// //
-// //        if ( autorun )
-// //            scripting->execute( autorun );
-// //
-//         graph = sg->createSceneGraph("world");
-
-        sub.add<RealmMyCharacterInfo>();
+GameScene::GameScene(PubSub::Broker& broker, zfw::IEngine& engine, zfw::MessageQueue& eventQueue, RenderingSystem& r,
+    unique_ptr<li::TcpSocket> socket)
+    : sub(broker, myPipe)
+    , ew(IEntityWorld2::Create(engine.GetBroadcastHandler()))
+    ,
+    // ui( 0 ), overlay( 0 ), displayUi( false ),
+    ks(engine.GetVarSystem())
+    ,
+    //            hasMoved( false ),
+    isTalking(false)
+    // viewDrag( false ), map( 0 ), renderProgram( 0 ), renderProgram2D( 0 )
+    , engine(engine)
+    , eventQueue(eventQueue)
+    , r(r) {
+    for (auto const& binding : bindings) {
+        ks.Subscribe(binding.id, binding.bindingName, binding.vkey);
     }
 
-GameScene::~GameScene()
-{
+    globalResMgr->SetTargetState(zfw::IResource2::REALIZED);
+    r.GetRm().RegisterResourceProviders(globalResMgr);
+
+    my_layer = std::make_unique<Ms3dModelLayer>(engine.GetBroadcastHandler(), engine, *ew, *globalResMgr, r.GetRm());
+    r.AddCustomLayer([](auto& ctx) { my_layer->Render(ctx); }, "ms3dModelLayer");
+
+    my_layer2 = std::make_unique<TerrainRenderLayer>(engine.GetBroadcastHandler(), engine, *ew, *globalResMgr);
+    r.AddCustomLayer([](auto& ctx) { my_layer2->Render(ctx); }, "terrainRenderLayer");
+
+    //         loadKeyBindings( keys, "profile/default.tolcl/controls.cfx2", bindingNames, sizeof( bindingNames ) /
+    //         sizeof( *bindingNames ) ); auto gr = sg->getGraphicsDriver(); keys[escKey] = gr->getKey( "Escape" );
+    //         keys[numEnterKey] = gr->getKey( "Num Enter" );
+    //         keys[toggleShadersKey] = gr->getKey( "G" );
+    //         keys[inventoryKey] = gr->getKey( "I" );
+
+    //         auto waterTex = globalResMgr->getTexture("tolcl/tex/0_water.png");
+    //         IMaterial* mat = gr->createSolidMaterial( "water", Colour::white()/*, waterTex*/ ,nullptr );
+
+    //         //IHeightMap* flat = sg->loa HeightMap( "tolcl/heightmap/flat.png", Vector<float>( 1000.0f, 1000.0f ),
+    //         0.0f ); li::Object<IHeightMap> flat = sg->createHeightMap( {2, 2} ); TerrainCreationInfo terrain {
+    //                 flat,
+    //                 Vector<float>( 50.0f, 50.0f, 0.0f ),
+    //                 Vector<>( 0.0f, 0.0f, 0.0f ),
+    //                 flat->getResolution(),
+    //                 Vector2<>(),
+    //                 Vector2<float>( 50.0f, 50.0f ),
+    //                 true,
+    //                 true,
+    //                 false,
+    //                 mat
+    //         };
+    // //        water = gr->createTerrain( "water", &terrain, 0 );
+    //         PlaneCreationInfo pci {
+    //                 {300.0f, 300.0f},
+    //                 {0.0f, 0.0f},
+    //                 {0.0f, 0.0f},
+    //                 {50.0f, 50.0f},
+    //                 false, true, mat
+    //         };
+    //         water = gr->createPlane("water", &pci);
+    //         flat.release();
+
+    //         IResourceManager* uiResMgr = Resources::getUiResMgr();
+    //         uiFont = uiResMgr->getFont( "Radiance.EpicStyler.Assets/DefaultFont.ttf", 20, IFont::normal );
+    //         chatFont = uiFont;
+
+    // //        if ( shaders )
+    // //        {
+    // //            renderProgram = new Program( "sg_assets/shader/Default" );
+    // //            renderProgram2D = new Program( "sg_assets/shader/2D" );
+    // //
+    // //            renderProgram->use();
+    // //        }
+
+    //         gr->setSceneAmbient( Colour( 0.2f, 0.2f, 0.2f ) );
+
+    //         displayMode = gr->getWindowSize();
+    //         maxChatLength = unsigned( ( displayMode.y - 100.0f ) / 25.0f );
+
+    session = new WorldSession(broker, move(socket));
+
+    //         //light = new Light( Light_positional, Vector<float>( 300.0f, 300.f, 30.f ), Vector<float>(), Colour(
+    //         0.2f, 0.2f, 0.2f ), Colour( 1.0f, 1.0f, 1.0f ), 40.0f ); light = gr->createDirectionalLight(
+    //         Vector<float>( 0.0f, 0.0f, -1.0f ), Colour(), Colour( 0.5f, 0.5f, 0.5f ), 40.0f );
+
+    // //        inventory = new Inventory();
+
+    //         ui = sg->getGuiDriver()->createGui({}, Vector<>(displayMode.x, displayMode.y));
+
+    // //        IPanel* mainPanel = ui->createPanel( Vector<>(displayMode.x / 2 + 40, displayMode.y - 48), {400, 48} );
+    // //        GameUI::GraphicalButton* invButton = new GameUI::GraphicalButton( 8, 8, 32, 32,
+    // globalResMgr->getTexture( "tolcl/gfx/invbutton.png" ) );
+    // //        invButton->setName( "inv_button" );
+    // //        invButton->setOnPush( this );
+    // //        mainPanel->add( invButton );
+    // //        ui->add( mainPanel );
+
+    // //        GameUI::ItemDrag* drag = new GameUI::ItemDrag( ui );
+    // //        drag->setName( "item_drag" );
+    // //        ui->add( drag );
+    // //        ui->overlay( drag );
+
+    //         up = down = left = right = zin = zout = false;
+
+    //         // init scripting engine
+
+    // //        scripting = new Scripting( this );
+    // //        InputStream* autorun = sg->open( "autorun.misl" );
+    // //
+    // //        if ( autorun )
+    // //            scripting->execute( autorun );
+    // //
+    //         graph = sg->createSceneGraph("world");
+
+    sub.add<RealmMyCharacterInfo>();
+}
+
+GameScene::~GameScene() {
     //     delete renderProgram;
     //     delete renderProgram2D;
 
@@ -186,7 +206,7 @@ GameScene::~GameScene()
     // player_refs
 }
 
-void GameScene::OnFrame( double delta ) {
+void GameScene::OnFrame(double delta) {
     ks.OnFrame();
 
     if (session) {
@@ -195,18 +215,20 @@ void GameScene::OnFrame( double delta ) {
 
     while (auto msg = myPipe.poll()) {
         if (auto myCharInfo = msg->cast<RealmMyCharacterInfo>()) {
-            map = new Map( myCharInfo->pos.x, myCharInfo->pos.y, engine, *ew );
+            map = new Map(myCharInfo->pos.x, myCharInfo->pos.y, engine, *ew);
 
             playerEntity = ew->CreateEntityWithId(myCharInfo->pid);
-            playerEntity->SetComponent(zfw::Model3D {"tolcl/model/human_0_sny.ms3d"});
-            playerEntity->SetComponent(zfw::Position {myCharInfo->pos, glm::angleAxis(myCharInfo->orientation, vec3 {0.0f, 0.0f, 1.0f})});
+            playerEntity->SetComponent(zfw::Model3D { "tolcl/model/human_0_sny.ms3d" });
+            playerEntity->SetComponent(
+                zfw::Position { myCharInfo->pos, glm::angleAxis(myCharInfo->orientation, vec3 { 0.0f, 0.0f, 1.0f }) });
 
             // displayUi = true;
         }
         else if (auto entInfo = msg->cast<RealmEntityAddition>()) {
             auto entity = ew->CreateEntity();
-            entity.SetComponent(zfw::Model3D {"tolcl/model/human_0_sny.ms3d"});
-            entity.SetComponent(zfw::Position {entInfo->pos, glm::angleAxis(entInfo->orientation, vec3 {0.0f, 0.0f, 1.0f})});
+            entity.SetComponent(zfw::Model3D { "tolcl/model/human_0_sny.ms3d" });
+            entity.SetComponent(
+                zfw::Position { entInfo->pos, glm::angleAxis(entInfo->orientation, vec3 { 0.0f, 0.0f, 1.0f }) });
         }
     }
 
@@ -216,22 +238,21 @@ void GameScene::OnFrame( double delta ) {
             engine.StopMainLoop();
             break;
 
-            case EVENT_VKEY: {
-                auto ev = msg->Data<EventVkey>();
+        case EVENT_VKEY: {
+            auto ev = msg->Data<EventVkey>();
 
-                ks.Handle(*ev);
+            ks.Handle(*ev);
 
-                if (ev->input.vkey.type == VKEY_KEY && ev->input.vkey.key == KEY_ESCAPE) {
-                    engine.StopMainLoop();
-                }
-
-                break;
+            if (ev->input.vkey.type == VKEY_KEY && ev->input.vkey.key == KEY_ESCAPE) {
+                engine.StopMainLoop();
             }
+
+            break;
+        }
         }
 
         msg->Release();
     }
-
 
     auto playerPos = playerEntity.has_value() ? playerEntity->GetComponent<zfw::Position>() : nullptr;
 
@@ -257,16 +278,20 @@ void GameScene::OnFrame( double delta ) {
         if (ks.IsHeld(moveUpKey)) {
             newPos += vec3(std::cos(angle) * runSpeed * delta, -std::sin(angle) * runSpeed * delta, 0.0f);
             playerHasMoved = true;
-        } else if (ks.IsHeld(moveDownKey)) {
+        }
+        else if (ks.IsHeld(moveDownKey)) {
             newPos -= vec3(std::cos(angle) * runSpeed * delta, -std::sin(angle) * runSpeed * delta, 0.0f);
             playerHasMoved = true;
         }
 
         if (ks.IsHeld(moveLeftKey)) {
-            newPos += vec3(std::cos(angle + zfw::f_pi / 2.0f) * runSpeed * delta, -std::sin(angle + zfw::f_pi / 2.0f) * runSpeed * delta, 0.0f);
+            newPos += vec3(std::cos(angle + zfw::f_pi / 2.0f) * runSpeed * delta,
+                -std::sin(angle + zfw::f_pi / 2.0f) * runSpeed * delta, 0.0f);
             playerHasMoved = true;
-        } else if (ks.IsHeld(moveRightKey)) {
-            newPos += vec3(std::cos(angle - zfw::f_pi / 2.0f) * runSpeed * delta, -std::sin(angle - zfw::f_pi / 2.0f) * runSpeed * delta, 0.0f);
+        }
+        else if (ks.IsHeld(moveRightKey)) {
+            newPos += vec3(std::cos(angle - zfw::f_pi / 2.0f) * runSpeed * delta,
+                -std::sin(angle - zfw::f_pi / 2.0f) * runSpeed * delta, 0.0f);
             playerHasMoved = true;
         }
 
@@ -275,123 +300,123 @@ void GameScene::OnFrame( double delta ) {
             session->movement(newPos, angle);
             map->moveCenter(engine, *ew, newPos.x, newPos.y);
 
-            playerEntity->SetComponent(zfw::Position{newPos, glm::angleAxis(-angle, vec3 {0.0f, 0.0f, 1.0f})});
+            playerEntity->SetComponent(zfw::Position { newPos, glm::angleAxis(-angle, vec3 { 0.0f, 0.0f, 1.0f }) });
         }
     }
 }
 
-    // void GameScene::bind( const String& keyName, const String& event )
-    // {
-    //     unsigned short key = sg->getGraphicsDriver()->getKey( keyName );
+// void GameScene::bind( const String& keyName, const String& event )
+// {
+//     unsigned short key = sg->getGraphicsDriver()->getKey( keyName );
 
-    //     reverse_iterate ( bindings )
-    //     if ( key == bindings.current().key )
-    //     {
-    //         bindings.remove( bindings.iter() );
-    //         break;
-    //     }
+//     reverse_iterate ( bindings )
+//     if ( key == bindings.current().key )
+//     {
+//         bindings.remove( bindings.iter() );
+//         break;
+//     }
 
-    //     Binding binding = { key, event };
-    //     bindings.add( binding );
-    // }
+//     Binding binding = { key, event };
+//     bindings.add( binding );
+// }
 
-    // bool GameScene::closeButtonAction()
-    // {
-    //     if ( !isTalking )
-    //         return true;
-    //     else
-    //         return false;
-    // }
+// bool GameScene::closeButtonAction()
+// {
+//     if ( !isTalking )
+//         return true;
+//     else
+//         return false;
+// }
 
-    // void GameScene::doMovement( float delta )
-    // {
-    //     if ( up )
-    //     {
-    //         player->loc += Vector<float>( cos( player->angle ) * runSpeed * delta, -sin( player->angle ) * runSpeed * delta );
-    //         hasMoved = true;
-    //     }
-    //     else if ( down )
-    //     {
-    //         player->loc -= Vector<float>( cos( player->angle ) * runSpeed * delta, -sin( player->angle ) * runSpeed * delta );
-    //         hasMoved = true;
-    //     }
+// void GameScene::doMovement( float delta )
+// {
+//     if ( up )
+//     {
+//         player->loc += Vector<float>( cos( player->angle ) * runSpeed * delta, -sin( player->angle ) * runSpeed *
+//         delta ); hasMoved = true;
+//     }
+//     else if ( down )
+//     {
+//         player->loc -= Vector<float>( cos( player->angle ) * runSpeed * delta, -sin( player->angle ) * runSpeed *
+//         delta ); hasMoved = true;
+//     }
 
-    //     if ( left )
-    //     {
-    //         player->loc += Vector<float>( cos( player->angle + M_PI / 2.0f ) * runSpeed * delta, -sin( player->angle + M_PI / 2.0f ) * runSpeed * delta );
-    //         hasMoved = true;
-    //     }
-    //     else if ( right )
-    //     {
-    //         player->loc += Vector<float>( cos( player->angle - M_PI / 2.0f ) * runSpeed * delta, -sin( player->angle - M_PI / 2.0f ) * runSpeed * delta );
-    //         hasMoved = true;
-    //     }
-    // }
+//     if ( left )
+//     {
+//         player->loc += Vector<float>( cos( player->angle + M_PI / 2.0f ) * runSpeed * delta, -sin( player->angle +
+//         M_PI / 2.0f ) * runSpeed * delta ); hasMoved = true;
+//     }
+//     else if ( right )
+//     {
+//         player->loc += Vector<float>( cos( player->angle - M_PI / 2.0f ) * runSpeed * delta, -sin( player->angle -
+//         M_PI / 2.0f ) * runSpeed * delta ); hasMoved = true;
+//     }
+// }
 
-    // void GameScene::onKeyState( int16_t key, Key::State state, Unicode::Char character )
-    // {
-    //     if ( isTalking && state == Key::pressed )
-    //     {
-    //         if ( key == 0x08 )
-    //             text = text.dropRightPart( 1 );
-    //         else if ( key == 0x0D || key == keys[escKey] || key == keys[numEnterKey] )
-    //         {
-    //             if ( key != keys[escKey] )
-    //                 say( text );
+// void GameScene::onKeyState( int16_t key, Key::State state, Unicode::Char character )
+// {
+//     if ( isTalking && state == Key::pressed )
+//     {
+//         if ( key == 0x08 )
+//             text = text.dropRightPart( 1 );
+//         else if ( key == 0x0D || key == keys[escKey] || key == keys[numEnterKey] )
+//         {
+//             if ( key != keys[escKey] )
+//                 say( text );
 
-    //             isTalking = false;
+//             isTalking = false;
 
-    //             text.clear();
-    //         }
-    //         else if ( character >= 0x20 )
-    //             text = text + Utf8Character( character );
+//             text.clear();
+//         }
+//         else if ( character >= 0x20 )
+//             text = text + Utf8Character( character );
 
-    //         return;
-    //     }
+//         return;
+//     }
 
-    //     if ( state == Key::pressed )
-    //     {
-    //         iterate ( bindings )
-    //         if ( key == bindings.current().key )
-    //         {
-    //             session->chat( bindings.current().chat );
-    //             return;
-    //         }
-    //     }
+//     if ( state == Key::pressed )
+//     {
+//         iterate ( bindings )
+//         if ( key == bindings.current().key )
+//         {
+//             session->chat( bindings.current().chat );
+//             return;
+//         }
+//     }
 
-    //     if ( key == keys[moveUpKey] )
-    //         up = (state == Key::pressed);
-    //     else if ( key == keys[moveDownKey] )
-    //         down = (state == Key::pressed);
-    //     else if ( key == keys[moveLeftKey] )
-    //         left = (state == Key::pressed);
-    //     else if ( key == keys[moveRightKey] )
-    //         right = (state == Key::pressed);
-    //     else if ( key == keys[chatKey] && state == Key::pressed )
-    //         isTalking = true;
-    //     else if ( key == keys[hideUiKey] && state == Key::pressed )
-    //     {
-    //         displayUi = !displayUi;
-    //         hasMoved = true;
-    //     }
-    //     else if ( key == keys[toggleShadersKey] && state == Key::pressed )
-    //     {
-    //         // TODO
-    //         shaders = !shaders;
-    //         //sg->detachShader();
-    //     }
-    //     else if ( key == keys[inventoryKey] && state == Key::pressed )
-    //     {
-    //     }
+//     if ( key == keys[moveUpKey] )
+//         up = (state == Key::pressed);
+//     else if ( key == keys[moveDownKey] )
+//         down = (state == Key::pressed);
+//     else if ( key == keys[moveLeftKey] )
+//         left = (state == Key::pressed);
+//     else if ( key == keys[moveRightKey] )
+//         right = (state == Key::pressed);
+//     else if ( key == keys[chatKey] && state == Key::pressed )
+//         isTalking = true;
+//     else if ( key == keys[hideUiKey] && state == Key::pressed )
+//     {
+//         displayUi = !displayUi;
+//         hasMoved = true;
+//     }
+//     else if ( key == keys[toggleShadersKey] && state == Key::pressed )
+//     {
+//         // TODO
+//         shaders = !shaders;
+//         //sg->detachShader();
+//     }
+//     else if ( key == keys[inventoryKey] && state == Key::pressed )
+//     {
+//     }
 
-    //     if ( devMode && key == /*Key::mouseWheelUp*/ -4 && state == Key::pressed ) {
-    //         dist -= 1.0f;
-    //     }
+//     if ( devMode && key == /*Key::mouseWheelUp*/ -4 && state == Key::pressed ) {
+//         dist -= 1.0f;
+//     }
 
-    //     if ( devMode && key == /*Key::mouseWheelDown*/ -5 && state == Key::pressed ) {
-    //         dist += 1.0f;
-    //     }
-    // }
+//     if ( devMode && key == /*Key::mouseWheelDown*/ -5 && state == Key::pressed ) {
+//         dist += 1.0f;
+//     }
+// }
 
 //     void GameScene::mouseButton( int x, int y, bool right, bool down )
 //     {
