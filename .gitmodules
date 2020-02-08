@@ -47,3 +47,6 @@
 [submodule "framework/dependencies/lua"]
 	path = framework/dependencies/lua
 	url = https://github.com/LuaDist/lua.git
+[submodule "framework/dependencies/fmt"]
+	path = framework/dependencies/fmt
+	url = https://github.com/fmtlib/fmt.git

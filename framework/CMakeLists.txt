@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(library ${PROJECT_NAME})
 
 add_subdirectory(dependencies/bleb)
+add_subdirectory(dependencies/fmt)
 add_subdirectory(dependencies/glm)
 add_subdirectory(dependencies/libcfx2)
 add_subdirectory(dependencies/littl)
@@ -207,6 +208,10 @@ if (WITH_BLEB)
     # ntile & StudioKit rely on bleb being public
     target_link_libraries(${library} PUBLIC bleb)
 endif()
+
+# fmt
+add_dependencies(${library} fmt)
+target_link_libraries(${library} PUBLIC fmt)
 
 # freetype2
 if (WITH_ZTYPE AND NOT EMSCRIPTEN)
