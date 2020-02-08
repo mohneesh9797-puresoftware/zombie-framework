@@ -4,9 +4,11 @@ project(GfxObsession)
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(GfxObsession
+		include/Gfx/RenderingContext.hpp
 		include/Gfx/RenderingSystem.hpp
 
 		src/RenderingSystem.cpp
+        src/RenderingContext2D.cpp
 		)
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)

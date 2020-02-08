@@ -14,8 +14,6 @@
 
 namespace Obs::Gfx {
 
-using std::optional;
-
 class ICustomRenderLayer {
 public:
     virtual void Render(IRenderingSystem& rendering) = 0;

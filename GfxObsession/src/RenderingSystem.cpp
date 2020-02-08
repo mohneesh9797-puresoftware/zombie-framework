@@ -1,3 +1,4 @@
+#include <Gfx/RenderingContext.hpp>
 #include <Gfx/RenderingSystem.hpp>
 
 #include <framework/broadcasthandler.hpp>
@@ -18,6 +19,7 @@
 using namespace RenderingKit;
 using glm::vec3;
 using std::make_unique;
+using std::optional;
 
 namespace Obs::Gfx {
 
@@ -149,8 +151,10 @@ void RenderingSystem::DrawWorld(optional<zfw::EntityHandle> playerEntity) {
         // gr->pushBlendMode( IGraphicsDriver::additive );
 
         if (position) {
-            font->DrawText(sprintf_255("Tales of Lanthaia (player %.1f %.1f %.1f)", position->pos.x, position->pos.y, position->pos.z),
-                    zfw::RGBA_WHITE, zfw::ALIGN_LEFT | zfw::ALIGN_TOP, {5.0f, 5.0f, 0.0f}, {});
+            RenderingContext ctx{rm};
+            auto ctx2d = RenderingContext2D{ctx}.WithTextColor(zfw::RGBA_WHITE);
+
+            ctx2d.WithAlignment({HAlignment::left, VAlignment::top}).WithFont(*font).WithPosLeftTop({5, 5}).FormatTextRow("Tales of Lanthaia (player {:.1f} {:.1f} {:.1f})", position->pos.x, position->pos.y, position->pos.z);
         }
 
         // if ( displayUi )
