@@ -3,6 +3,7 @@
 
 namespace Obs::Gfx {
 
+struct RenderingContext;
 class ICustomRenderLayer;
 class IRenderingSystem;
 

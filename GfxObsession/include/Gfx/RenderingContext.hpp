@@ -15,6 +15,7 @@ using RenderingKit::u8string_view;
 
 struct RenderingContext {
     RenderingKit::IRenderingManager& rm;
+    IRenderingSystem& r;
 };
 
 enum class HAlignment {

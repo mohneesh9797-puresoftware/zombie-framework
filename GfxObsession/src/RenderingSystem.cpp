@@ -59,8 +59,8 @@ bool RenderingSystem::Startup(zfw::IEngine* sys, zfw::MessageQueue* eventQueue) 
     return true;
 }
 
-void RenderingSystem::AddCustomLayer(ICustomRenderLayer& layer, const char* name) {
-    layers.emplace_back(RenderLayer {&layer, name});
+void RenderingSystem::AddCustomLayer(std::function<void(RenderingContext const& ctx)> layerFunction, const char* name) {
+    layers.emplace_back(RenderLayer {layerFunction, name});
 }
 
 void RenderingSystem::AddEntityWorldLayer(zfw::IEntityWorld2& world, const char* name) {
@@ -125,9 +125,11 @@ void RenderingSystem::DrawWorld(optional<zfw::EntityHandle> playerEntity) {
 
     // light->render();
 
+    RenderingContext ctx{rm, *this};
+
     for (auto const& layer : layers) {
-        if (layer.custom) {
-            layer.custom->Render(*this);
+        if (layer.function) {
+            layer.function(ctx);
         }
     }
 
@@ -151,7 +153,6 @@ void RenderingSystem::DrawWorld(optional<zfw::EntityHandle> playerEntity) {
         // gr->pushBlendMode( IGraphicsDriver::additive );
 
         if (position) {
-            RenderingContext ctx{rm};
             auto ctx2d = RenderingContext2D{ctx}.WithTextColor(zfw::RGBA_WHITE);
 
             ctx2d.WithAlignment({HAlignment::left, VAlignment::top}).WithFont(*font).WithPosLeftTop({5, 5}).FormatTextRow("Tales of Lanthaia (player {:.1f} {:.1f} {:.1f})", position->pos.x, position->pos.y, position->pos.z);

@@ -14,21 +14,18 @@
 
 namespace Obs::Gfx {
 
-class ICustomRenderLayer {
-public:
-    virtual void Render(IRenderingSystem& rendering) = 0;
-};
-
 class IRenderingSystem {
 public:
-    virtual void AddCustomLayer(ICustomRenderLayer& layer, const char* name) = 0;
+    virtual void AddCustomLayer(std::function<void(RenderingContext const& ctx)> layerFunction, const char* name) = 0;
     virtual void AddEntityWorldLayer(zfw::IEntityWorld2& world, const char* name) = 0;
 };
 
 struct RenderLayer {
     // TODO: a variant would be more fitting
-    ICustomRenderLayer* custom = nullptr;
+//    ICustomRenderLayer* custom = nullptr;
 //    zfw::IEntityWorld2* world = nullptr;
+
+    std::function<void(RenderingContext const& ctx)> function;
 
     std::string name;
 };
@@ -50,7 +47,8 @@ public:
     RenderingKit::IRenderingManager& GetRm() { return *rm; }
 
     // IRenderingSystem
-    void AddCustomLayer(ICustomRenderLayer& layer, const char* name) override;
+//    void AddCustomLayer(ICustomRenderLayer& layer, const char* name) override;
+    void AddCustomLayer(std::function<void(RenderingContext const& ctx)> layerFunction, const char* name) override;
     void AddEntityWorldLayer(zfw::IEntityWorld2& world, const char* name) override;
 
 private:
