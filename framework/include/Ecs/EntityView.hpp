@@ -1,13 +1,16 @@
-#ifndef FRAMEWORK_UTILITY_ENTITYVIEW_HPP
-#define FRAMEWORK_UTILITY_ENTITYVIEW_HPP
+#ifndef OBS_ECS_ENTITYVIEW_HPP
+#define OBS_ECS_ENTITYVIEW_HPP
 
 #include <framework/base.hpp>
 #include <framework/broadcasthandler.hpp>
+#include <framework/componenttype.hpp>
+#include <framework/entityworld2.hpp>
+#include <framework/utility/essentials.hpp>
 
 #include <functional>
 #include <unordered_map>
 
-namespace zfw {
+namespace Obs::Ecs {
 
 // adapted from https://stackoverflow.com/a/54225452/2524350
 template<size_t I = 0, typename... Tp>
@@ -35,7 +38,7 @@ public:
         References const components;
     };
 
-    typedef std::function<void(IEntityWorld2& world, EntityId entityId, References components, CustomData& customData)> UpdateCustomDataInPlaceFunction;
+    typedef std::function<void(zfw::IEntityWorld2& world, zfw::EntityId entityId, References components, CustomData& customData)> UpdateCustomDataInPlaceFunction;
 
     std::unordered_map<intptr_t, Tracked> entities;
     UpdateCustomDataInPlaceFunction const updateCustomDataInPlace;
@@ -44,8 +47,8 @@ public:
 
     void OnComponentEvent(zfw::IEntityWorld2& world, zfw::EntityId entityId, zfw::IComponentType &type, void *data, zfw::ComponentEvent event);
 
-    void SubscribeToComponentTypes(IBroadcastHandler& bh, IBroadcastSubscriber& sub) {
-        (bh.SubscribeToComponentType(sub, GetComponentType<Components>()), ...);
+    void SubscribeToComponentTypes(zfw::IBroadcastHandler& bh, zfw::IBroadcastSubscriber& sub) {
+        (bh.SubscribeToComponentType(sub, zfw::GetComponentType<Components>()), ...);
     }
 };
 

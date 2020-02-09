@@ -27,6 +27,7 @@ set(sources
         include/Base/u8string_view.hpp
         include/Data/HeightMap.hpp
         include/Data/Matrix2D.hpp
+        include/Ecs/EntityView.hpp
         include/Ecs/TerrainHeightMap.hpp
         include/framework/abstractentity.hpp
         include/framework/app.hpp
@@ -70,7 +71,6 @@ set(sources
         include/framework/studio/recentfiles.hpp
         include/framework/timer.hpp
         include/framework/utility/algebrahelpers.hpp
-        include/framework/utility/entityview.hpp
         include/framework/utility/errorbuffer.hpp
         include/framework/utility/essentials.hpp
         include/framework/utility/keytracker.hpp
