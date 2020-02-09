@@ -8,7 +8,6 @@
 
 #include <framework/broadcasthandler.hpp>
 #include <framework/entityworld2.hpp>
-#include <framework/utility/entityview.hpp>
 
 #include <vector>
 
